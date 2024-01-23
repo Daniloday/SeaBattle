@@ -56,19 +56,19 @@ fun MenuScreen(
         Text(text = stringResource(id = R.string.single_mode), modifier = Modifier.clickable {
 
         },
-            style = AppTheme.typography.headerTextBold,
+            style = AppTheme.typography.h1,
             color = AppTheme.colors.primary
         )
         Text(text = stringResource(id = R.string.multiplayer), modifier = Modifier.clickable {
             navigateTo(NavigationTree.Multiplayer)
         },
-            style = AppTheme.typography.headerTextBold,
+            style = AppTheme.typography.h1,
             color = AppTheme.colors.primary
         )
         Text(text = stringResource(id = R.string.settings), modifier = Modifier.clickable {
 
         },
-            style = AppTheme.typography.headerTextBold,
+            style = AppTheme.typography.h1,
             color = AppTheme.colors.primary
         )
 

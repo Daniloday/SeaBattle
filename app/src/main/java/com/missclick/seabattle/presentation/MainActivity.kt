@@ -22,7 +22,7 @@ class MainActivity : ComponentActivity() {
 
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = AppTheme.colors.primary
+                    color = AppTheme.colors.secondary
                 ) {
                     Navigation()
                 }

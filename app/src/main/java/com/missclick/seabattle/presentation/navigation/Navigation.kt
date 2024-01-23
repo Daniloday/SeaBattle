@@ -14,7 +14,7 @@ fun Navigation(){
     NavHost(navController = navController, startDestination = NavigationTree.Menu.route){
         
         composable(NavigationTree.Menu.route){
-            MenuRoute()
+            MenuRoute(navController)
         }
         
     }

@@ -4,17 +4,11 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 data class Colors (
-
-
-
-
     val primaryBackground : Color,
     val secondaryBackground : Color,
 
     val primary: Color,
     val secondary: Color,
-
-
 )
 
 
@@ -23,11 +17,7 @@ val lightColorPalette = Colors(
     secondaryBackground = Color(0xFFD9D9D9),
 
     primary = Color(0xFF000000),
-    secondary = Color(0xFF817D7D),
-
-
-
-
+    secondary = Color(0xFF817D7D)
 )
 
 

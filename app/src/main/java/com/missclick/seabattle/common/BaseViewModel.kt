@@ -12,3 +12,4 @@ abstract class BaseViewModel<S,E>(uiState : S) : ViewModel(), EventHandler<E>{
 
 
 }
+

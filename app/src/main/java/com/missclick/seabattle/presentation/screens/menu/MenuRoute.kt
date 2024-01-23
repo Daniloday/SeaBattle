@@ -52,7 +52,7 @@ fun MenuScreen(
         verticalArrangement = Arrangement.SpaceEvenly
 
         ) {
-//        .clickable { navigateTo(NavigationTree.Menu) }
+
         Text(text = stringResource(id = R.string.single_mode), modifier = Modifier.clickable {
 
         },

@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class DoStepUseCase constructor () {
-    operator fun invoke(xIndex  : Int, yIndex : Int) : Flow<Resource<Nothing>> = flow{
-        emit(Resource.Loading())
-        delay(1000)
-        emit(Resource.Success(null))
-    }
+//    operator fun invoke(xIndex  : Int, yIndex : Int) : Flow<Resource<Nothing>> = flow{
+//        emit(Resource.Loading)
+//        delay(1000)
+//        emit(Resource.Success(null))
+//    }
 
 }

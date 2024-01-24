@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "883446985016",
+    "project_id": "seabatle-e7dfa",
+    "storage_bucket": "seabatle-e7dfa.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:883446985016:android:f54792577a74a2210d11cd",
+        "android_client_info": {
+          "package_name": "com.missclick.seabattle"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBe0tfVxFDjQg1-oAu0iZ19UgBu0_NnAtA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

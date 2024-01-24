@@ -1,50 +1,336 @@
 package com.missclick.seabattle.presentation.components
 
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.missclick.seabattle.R
+import com.missclick.seabattle.presentation.ui.theme.AppTheme
 
 
-enum class CellState(){
-    CLEAR, EMPTY, DOT, SHIP_ALIVE, SHIP_DAMAGE
+enum class CellState() {
+    EMPTY, DOT, SHIP_ALIVE, SHIP_DAMAGE
 }
 
-var list = listOf<List<CellState>>(
-    listOf(CellState.EMPTY, CellState.EMPTY, CellState.EMPTY)
+var listBattlefield = listOf<List<CellState>>(
+    listOf(
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY
+    ),
+    listOf(
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY
+    ),
+    listOf(
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY
+    ),
+    listOf(
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY
+    ),
+    listOf(
+        CellState.EMPTY,
+        CellState.DOT,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.SHIP_ALIVE,
+        CellState.EMPTY,
+        CellState.SHIP_DAMAGE,
+        CellState.EMPTY,
+        CellState.EMPTY
+    ),
+    listOf(
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY
+    ),
+    listOf(
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY
+    ),
+    listOf(
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY
+    ),
+    listOf(
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY
+    ),
+    listOf(
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY,
+        CellState.EMPTY
+    )
 )
 
+var numbList = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
+var abcList = listOf("a", "b", "c", "d", "e", "f", "g", "h", "i", "j")
+
 @Composable
-fun Battlefield(){
+fun Battlefield(listBattlefield: List<List<CellState>>) {
 
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(
+            Modifier
+                .size(300.dp)
+                .align(Alignment.Center)
+        ) {
+            //numbers
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f)
+            ) {
+                Spacer(modifier = Modifier.weight(1f))
+                for (letter in numbList) {
+                    TextCellBattlefield(modifier = Modifier.weight(1f), text = letter)
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(10f)
+            ) {
 
-    LazyColumn(content = {
-        item {
+                //letters
+                Column(Modifier.weight(1f)) {
+                    for (rowNumber in listBattlefield.indices) {
+                        TextCellBattlefield(
+                            modifier = Modifier.weight(1f),
+                            text = abcList[rowNumber]
+                        )
 
-        }
-        itemsIndexed(list){
-
-            _, _ ->
-
-            LazyRow{
-                item {
-
+                    }
                 }
 
+                //battlefield
+                Column(
+                    Modifier
+                        .weight(10f)
+                        .border(1.dp, AppTheme.colors.primary)) {
+                    for (rowNumber in listBattlefield.indices) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                        ) {
+                            for (j in listBattlefield[rowNumber]) {
+
+                                when (j) {
+                                    CellState.EMPTY -> {
+                                        EmptyCellBattlefield(
+                                            modifier = Modifier
+                                                .weight(1f)
+                                                .clickable { })
+                                    }
+
+                                    CellState.DOT -> {
+                                        DotCellBattlefield(modifier = Modifier.weight(1f))
+                                    }
+
+                                    CellState.SHIP_ALIVE -> {
+                                        ShipAliveCellBattlefield(modifier = Modifier.weight(1f))
+                                    }
+
+                                    CellState.SHIP_DAMAGE -> {
+                                        ShipDamageCellBattlefield(modifier = Modifier.weight(1f))
+                                    }
+
+                                }
+
+                            }
+                        }
+                    }
+                }
 
             }
 
+        }
+    }
+}
 
+@Composable
+fun TextCellBattlefield(modifier: Modifier, text: String) {
+    Card(
+        modifier = modifier,
+        shape = RectangleShape,
+        colors = CardDefaults.cardColors(containerColor = Color.Transparent)
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Text(
+                text = text,
+                color = AppTheme.colors.secondary,
+                modifier = Modifier.align(
+                    Alignment.Center
+                ),
+                style = AppTheme.typography.h3,
+                textAlign = TextAlign.Center
+            )
+        }
+    }
+}
+
+@Composable
+fun EmptyCellBattlefield(modifier: Modifier) {
+    Card(
+        modifier = modifier,
+        border = BorderStroke(0.5.dp, AppTheme.colors.secondaryShadow),
+        shape = RectangleShape
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
 
         }
-    })
-
-
+    }
 }
+
+@Composable
+fun DotCellBattlefield(modifier: Modifier) {
+    Card(
+        modifier = modifier,
+        border = BorderStroke(0.5.dp, AppTheme.colors.secondaryShadow),
+        shape = RectangleShape
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                painter = painterResource(id = R.drawable.dot),
+                contentDescription = "dot",
+                modifier = Modifier
+                    .fillMaxSize(0.7f)
+                    .align(
+                        Alignment.Center
+                    )
+            )
+        }
+    }
+}
+
+
+@Composable
+fun ShipAliveCellBattlefield(modifier: Modifier) {
+    Card(
+        modifier = modifier,
+        border = BorderStroke(2.dp, AppTheme.colors.primary),
+        shape = RectangleShape
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+
+        }
+    }
+}
+
+
+@Composable
+fun ShipDamageCellBattlefield(modifier: Modifier) {
+    Card(
+        modifier = modifier,
+        border = BorderStroke(2.dp, AppTheme.colors.primary),
+        shape = RectangleShape
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Image(
+                painter = painterResource(id = R.drawable.cross),
+                contentDescription = "cross",
+                modifier = Modifier
+                    .fillMaxSize(0.7f)
+                    .align(
+                        Alignment.Center
+                    ),
+
+                )
+        }
+    }
+}
+
 
 

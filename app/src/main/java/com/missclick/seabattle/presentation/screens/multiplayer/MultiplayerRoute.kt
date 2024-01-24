@@ -64,13 +64,13 @@ fun MultiplayerScreen(
             Text(text = stringResource(id = R.string.or), modifier = Modifier.clickable {
 
             },
-                style = AppTheme.typography.headerTextBold,
+                style = AppTheme.typography.h1,
                 color = AppTheme.colors.primary
             )
             Text(text = stringResource(id = R.string.create_room), modifier = Modifier.clickable {
 
             },
-                style = AppTheme.typography.headerTextBold,
+                style = AppTheme.typography.h1,
                 color = AppTheme.colors.primary
             )
 

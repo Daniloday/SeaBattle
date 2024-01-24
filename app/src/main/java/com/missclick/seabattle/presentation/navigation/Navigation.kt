@@ -20,7 +20,7 @@ fun Navigation(){
 
     val battleViewModel : BattleViewModel = hiltViewModel()
 
-    NavHost(navController = navController, startDestination = NavigationTree.Battle.route){
+    NavHost(navController = navController, startDestination = NavigationTree.Prepare.route){
 
         composable(NavigationTree.Menu.route){
             MenuRoute(navController)

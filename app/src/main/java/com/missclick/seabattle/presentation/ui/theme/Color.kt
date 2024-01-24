@@ -9,6 +9,7 @@ data class Colors (
 
     val primary: Color,
     val secondary: Color,
+    val secondaryShadow: Color
 )
 
 
@@ -17,7 +18,9 @@ val lightColorPalette = Colors(
     secondaryBackground = Color(0xFFD9D9D9),
 
     primary = Color(0xFF000000),
-    secondary = Color(0xFF817D7D)
+    secondary = Color(0xFF817D7D),
+    secondaryShadow = Color(0x4D817D7D)
+
 )
 
 

@@ -62,7 +62,7 @@ fun MultiplayerScreen(
     navigateTo: (NavigationTree) -> Unit
 ) {
     var text by remember { mutableStateOf("") }
-    Box(modifier = Modifier.fillMaxSize()){
+    Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
                 .fillMaxSize(0.7F)
@@ -71,36 +71,62 @@ fun MultiplayerScreen(
             verticalArrangement = Arrangement.SpaceEvenly
 
         ) {
-            Row(modifier = Modifier.align(Alignment.CenterHorizontally),
-                horizontalArrangement = Arrangement.SpaceEvenly){
+            Row(
+                modifier = Modifier.align(Alignment.CenterHorizontally),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
                 TextField(
                     value = text,
-                    modifier = Modifier.clip(shape = RoundedCornerShape(10.dp)).border(1.dp, color = AppTheme.colors.primary,shape = RoundedCornerShape(10.dp)).background(AppTheme.colors.secondaryBackground).width(width = 230.dp),
+                    modifier = Modifier
+                        .clip(shape = RoundedCornerShape(10.dp))
+                        .border(
+                            1.dp,
+                            color = AppTheme.colors.primary,
+                            shape = RoundedCornerShape(10.dp)
+                        )
+                        .background(AppTheme.colors.secondaryBackground)
+                        .width(width = 230.dp),
                     textStyle = AppTheme.typography.h3,
                     placeholder = {
-                        Text(text = stringResource(id = R.string.label),color=AppTheme.colors.secondary, style = AppTheme.typography.h3)
+                        Text(
+                            text = stringResource(id = R.string.label),
+                            color = AppTheme.colors.secondary,
+                            style = AppTheme.typography.h3
+                        )
                     },
                     onValueChange = { text = it },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
-                Image(painter = painterResource(id = R.drawable.select_mark), modifier = Modifier.padding(start = 24.dp).size(36.dp).align(Alignment.CenterVertically), contentDescription = null)
+                Image(
+                    painter = painterResource(id = R.drawable.select_mark),
+                    modifier = Modifier
+                        .padding(start = 24.dp)
+                        .size(36.dp)
+                        .align(Alignment.CenterVertically)
+                        .clickable {
+                            navigateTo(NavigationTree.Prepare)
+                        },
+                    contentDescription = null,
+                )
             }
 
-            Text(text = stringResource(id = R.string.or), modifier = Modifier.clickable {
+            Text(
+                text = stringResource(id = R.string.or), modifier = Modifier.clickable {
 
-            },
+                },
                 style = AppTheme.typography.h2,
                 color = AppTheme.colors.secondary
             )
-            Text(text = stringResource(id = R.string.create_room), modifier = Modifier.clickable {
-
-            },
+            Text(
+                text = stringResource(id = R.string.create_room), modifier = Modifier.clickable {
+                    navigateTo(NavigationTree.Waiting)
+                },
                 style = AppTheme.typography.h2,
                 color = AppTheme.colors.primary
             )
         }
-        BackMark(){
+        BackMark() {
             navigateTo(NavigationTree.Menu)
         }
     }

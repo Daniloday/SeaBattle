@@ -16,7 +16,7 @@ class ConnectAndObserveRoomUseCase @Inject constructor (
     val fireStore: FireStore
 ) {
 
-    operator fun invoke(code : String): Flow<Resource<Game>> = callbackFlow {
+    operator fun invoke(code : String, isOwner : Boolean): Flow<Resource<Game>> = callbackFlow {
         fireStore.newConnect(code) { creationStatus ->
             when (creationStatus) {
                 is Resource.Success -> {
@@ -24,7 +24,7 @@ class ConnectAndObserveRoomUseCase @Inject constructor (
 
                         when (observeStatus) {
                             is Resource.Success -> {
-                                trySend(Resource.Success(observeStatus.data.toGame(false, code)))
+                                trySend(Resource.Success(observeStatus.data.toGame(isOwner, code)))
                             }
 
                             is Resource.Loading -> {

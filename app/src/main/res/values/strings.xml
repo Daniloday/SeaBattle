@@ -7,4 +7,6 @@
     <string name="label">Enter code</string>
     <string name="or">or</string>
     <string name="create_room">create room</string>
+    <string name="connecting">Connecting...</string>
+    <string name="shareCode">Share this code with your friend</string>
 </resources>

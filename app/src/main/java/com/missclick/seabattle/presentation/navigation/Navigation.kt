@@ -11,6 +11,7 @@ import com.missclick.seabattle.presentation.screens.battle.BattleViewModel
 import com.missclick.seabattle.presentation.screens.menu.MenuRoute
 import com.missclick.seabattle.presentation.screens.multiplayer.MultiplayerRoute
 import com.missclick.seabattle.presentation.screens.prepare.PrepareRoute
+import com.missclick.seabattle.presentation.waiting.WaitingRoute
 
 
 @Composable
@@ -18,9 +19,8 @@ fun Navigation(){
 
     val navController = rememberNavController()
 
-    val battleViewModel : BattleViewModel = hiltViewModel()
 
-    NavHost(navController = navController, startDestination = NavigationTree.Prepare.route){
+    NavHost(navController = navController, startDestination = NavigationTree.Menu.route){
 
         composable(NavigationTree.Menu.route){
             MenuRoute(navController)
@@ -31,11 +31,15 @@ fun Navigation(){
 
 
         composable(NavigationTree.Battle.route){
-            BattleRoute(navController, battleViewModel)
+            BattleRoute(navController)
         }
 
         composable(NavigationTree.Prepare.route){
             PrepareRoute(navController)
+        }
+
+        composable(NavigationTree.Waiting.route){
+            WaitingRoute(navController)
         }
 
     }

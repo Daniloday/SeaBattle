@@ -159,54 +159,52 @@ var numbList = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
 var abcList = listOf("a", "b", "c", "d", "e", "f", "g", "h", "i", "j")
 
 @Composable
-fun Battlefield(listBattlefield: List<List<Cell>>) {
+fun Battlefield(listBattlefield: List<List<Cell>>, modifierColumn: Modifier) {
 
-    Box(modifier = Modifier.fillMaxSize()) {
-        Column(
-            Modifier
-                .size(300.dp)
-                .align(Alignment.Center)
+    Column(
+        modifier = modifierColumn
+    ) {
+        //numbers
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
         ) {
-            //numbers
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-            ) {
-                Spacer(modifier = Modifier.weight(1f))
-                for (letter in numbList) {
-                    TextCellBattlefield(modifier = Modifier.weight(1f), text = letter)
+            Spacer(modifier = Modifier.weight(1f))
+            for (letter in numbList) {
+                TextCellBattlefield(modifier = Modifier.weight(1f), text = letter)
+            }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(10f)
+        ) {
+
+            //letters
+            Column(Modifier.weight(1f)) {
+                for (rowNumber in listBattlefield.indices) {
+                    TextCellBattlefield(
+                        modifier = Modifier.weight(1f),
+                        text = abcList[rowNumber]
+                    )
+
                 }
             }
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
+
+            //battlefield
+            Column(
+                Modifier
                     .weight(10f)
+                    .border(1.dp, AppTheme.colors.primary)
             ) {
-
-                //letters
-                Column(Modifier.weight(1f)) {
-                    for (rowNumber in listBattlefield.indices) {
-                        TextCellBattlefield(
-                            modifier = Modifier.weight(1f),
-                            text = abcList[rowNumber]
-                        )
-
-                    }
-                }
-
-                //battlefield
-                Column(
-                    Modifier
-                        .weight(10f)
-                        .border(1.dp, AppTheme.colors.primary)) {
-                    for (rowNumber in listBattlefield.indices) {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                        ) {
-                            for (j in listBattlefield[rowNumber]) {
+                for (rowNumber in listBattlefield.indices) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        for (j in listBattlefield[rowNumber]) {
 
                                 when (j) {
                                     Cell.EMPTY -> {

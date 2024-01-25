@@ -12,6 +12,9 @@ import com.missclick.seabattle.data.remote.dto.GameDto
 import com.missclick.seabattle.domain.model.Game
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.Moshi
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import kotlin.random.Random
@@ -22,48 +25,52 @@ class FireStore @Inject constructor() {
 
     private val db by lazy { Firebase.firestore }
 
-
-    fun newCreateRoom(result : (Resource<String>) -> Unit){
-        val code = (10000..99999).random(Random(System.currentTimeMillis())).toString()
-        db.collection(Constants.FIRE_STORE_COLLECTION_NAME).document(code).set(
-           GameDto()
-        ).addOnFailureListener {
-            result(Resource.Error(it.message.toString()))
-        }.addOnSuccessListener {
-            result(Resource.Success(code))
-        }
+    fun connect(code : String) = callbackFlow<Nothing?>{
+        db.collection(Constants.FIRE_STORE_COLLECTION_NAME).document(code)
+            .update("friendIsConnected", true)
+            .addOnSuccessListener {
+                trySend(null)
+            }
+            .addOnFailureListener {
+                close(it)
+            }
+        awaitClose()
     }
 
-    fun newObserve(code : String, result : (Resource<GameDto>) -> Unit){
+    fun observe(code : String) = callbackFlow<GameDto>{
         val docRef = db.collection(Constants.FIRE_STORE_COLLECTION_NAME).document(code)
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
-                result(Resource.Error(e.message.toString()))
+                close(e)
                 return@addSnapshotListener
             }
             if (snapshot != null && snapshot.exists()) {
 
                 val data = snapshot.data
-
-                result(Resource.Success(Gson().fromJson(data.toString(), GameDto::class.java)))
+                val data2 = Gson().fromJson(data.toString(), GameDto::class.java)
+                trySend(data2)
 
             } else {
-                result(
-                    Resource.Error("Snapshot is null or empty")
-                )
+                close(Throwable("Snapshot is null or empty"))
             }
         }
+        awaitClose()
     }
-    fun newConnect(code : String, result : (Resource<Nothing?>) -> Unit){
-        db.collection(Constants.FIRE_STORE_COLLECTION_NAME).document(code)
-            .update("friendIsConnected", true)
-            .addOnSuccessListener {
-               result(Resource.Success(null))
-            }
-            .addOnFailureListener {
-                result(Resource.Error(it.message.toString()))
-            }
+
+    fun createRoom() = callbackFlow<String>{
+        val code = (10000..99999).random(Random(System.currentTimeMillis())).toString()
+        db.collection(Constants.FIRE_STORE_COLLECTION_NAME).document(code).set(
+           GameDto()
+        ).addOnFailureListener {
+           close(it)
+        }.addOnSuccessListener {
+            trySend(code)
+        }
+        awaitClose()
     }
+
+
+
 
     fun setReady(code : String, isOwner : Boolean, cells : List<CellDto>){
         db.collection(Constants.FIRE_STORE_COLLECTION_NAME).document(code)

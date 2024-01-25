@@ -30,7 +30,7 @@ fun Navigation(){
         }
 
 
-        composable(NavigationTree.Battle.route){
+        composable(NavigationTree.Battle.route + "/{${NavigationKeys.CODE}}/{${NavigationKeys.IS_OWNER}}"){
             BattleRoute(navController)
         }
 

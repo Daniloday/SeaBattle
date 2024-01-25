@@ -10,9 +10,9 @@ class DoStepUseCase @Inject constructor (
     val fireStore: FireStore
 ) {
 
-    operator fun invoke(yIndex: Int, xIndex: Int,  cells: List<List<Cell>>, code: String, isOwner : Boolean){
+    operator fun invoke(yIndex: Int, xIndex: Int,  friendCells: List<List<Cell>>, code: String, isOwner : Boolean){
 
-        val newDtoField = cells.cellsToDto().mapIndexed { index, element, ->
+        val newDtoField = friendCells.cellsToDto().mapIndexed { index, element, ->
             if (index == yIndex * 10 + xIndex){
                 CellDto(dot = true, element.ship)
             }else{

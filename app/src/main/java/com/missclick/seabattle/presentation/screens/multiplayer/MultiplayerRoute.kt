@@ -15,9 +15,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,6 +49,12 @@ fun MultiplayerRoute(navController: NavController, vm: MultiplayerViewModel = hi
 
     val uiState by vm.uiState.collectAsState()
 
+    if (uiState.connectionStatus is ConnectionStatus.Success){
+        LaunchedEffect(key1 = Unit, block = {
+            navController.navigate(NavigationTree.Battle.route + "/" + uiState.code + "/" + "false")
+        })
+    }
+
     MultiplayerScreen(
         uiState = uiState,
         obtainEvent = vm::obtainEvent,
@@ -61,7 +69,6 @@ fun MultiplayerScreen(
     obtainEvent: (MultiplayerEvent) -> Unit,
     navigateTo: (NavigationTree) -> Unit
 ) {
-    var text by remember { mutableStateOf("") }
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -76,12 +83,16 @@ fun MultiplayerScreen(
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
                 TextField(
-                    value = text,
+                    value = uiState.code,
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(10.dp))
                         .border(
                             1.dp,
-                            color = AppTheme.colors.primary,
+                            color = when (uiState.connectionStatus) {
+                                is ConnectionStatus.Nothing, ConnectionStatus.Loading -> AppTheme.colors.primary
+                                is ConnectionStatus.Error -> AppTheme.colors.error
+                                is ConnectionStatus.Success -> AppTheme.colors.success
+                            },
                             shape = RoundedCornerShape(10.dp)
                         )
                         .background(AppTheme.colors.secondaryBackground)
@@ -94,21 +105,30 @@ fun MultiplayerScreen(
                             style = AppTheme.typography.h3
                         )
                     },
-                    onValueChange = { text = it },
+                    onValueChange = { obtainEvent(MultiplayerEvent.OnCodeChange(it)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
                 )
 
-                Image(
-                    painter = painterResource(id = R.drawable.select_mark),
-                    modifier = Modifier
+
+                if (uiState.connectionStatus is ConnectionStatus.Loading){
+                    CircularProgressIndicator(modifier = Modifier
                         .padding(start = 24.dp)
                         .size(36.dp)
-                        .align(Alignment.CenterVertically)
-                        .clickable {
-                            navigateTo(NavigationTree.Prepare)
-                        },
-                    contentDescription = null,
-                )
+                        .align(Alignment.CenterVertically), color = AppTheme.colors.secondary)
+                }else{
+                    Image(
+                        painter = painterResource(id = R.drawable.select_mark),
+                        modifier = Modifier
+                            .padding(start = 24.dp)
+                            .size(36.dp)
+                            .align(Alignment.CenterVertically)
+                            .clickable {
+                                obtainEvent(MultiplayerEvent.Connect)
+                            },
+                        contentDescription = null,
+                    )
+                }
+
             }
 
             Text(

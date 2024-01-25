@@ -21,7 +21,7 @@ data class CellDto(
 
 
 
-fun GameDto.toGame(isOwner : Boolean, code : String) : Game{
+fun GameDto.toGame(isOwner : Boolean) : Game{
 
     return Game(
         yourCells = if (isOwner) ownerCells.dtoCellsToGame() else friendCells.dtoCellsToGame(),
@@ -30,7 +30,6 @@ fun GameDto.toGame(isOwner : Boolean, code : String) : Game{
         friendIsReady = if (isOwner) friendIsReady else ownerIsReady,
         youAreReady = if (isOwner) ownerIsReady else friendIsReady,
         yourMove = if (isOwner) moveOwner else !moveOwner,
-        code = code
     )
 }
 

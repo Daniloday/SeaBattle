@@ -26,12 +26,12 @@ fun WaitingRoute(navController: NavController, vm: WaitingViewModel = hiltViewMo
     val uiState by vm.uiState.collectAsState()
 
     WaitingScreen(uiState) {
-        navController.navigate(it.route)
+        navController.navigate(it)
     }
 }
 
 @Composable
-fun WaitingScreen(uiState: WaitingUiState, navigateTo: (NavigationTree) -> Unit) {
+fun WaitingScreen(uiState: WaitingUiState, navigateTo: (String) -> Unit) {
 
 
     when (uiState) {
@@ -48,7 +48,7 @@ fun WaitingScreen(uiState: WaitingUiState, navigateTo: (NavigationTree) -> Unit)
 }
 
 @Composable
-fun WaitingSuccess(uiState: WaitingUiState.Success, navigateTo: (NavigationTree) -> Unit) {
+fun WaitingSuccess(uiState: WaitingUiState.Success, navigateTo: (String) -> Unit) {
     Box(Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier.align(Alignment.Center),
@@ -71,7 +71,7 @@ fun WaitingSuccess(uiState: WaitingUiState.Success, navigateTo: (NavigationTree)
         if (uiState.friendIsConnected) {
             LaunchedEffect(key1 = Unit, block = {
                 println("navigate from waiting")
-                navigateTo(NavigationTree.Prepare)
+                navigateTo(NavigationTree.Battle.route + "/" + uiState.code + "/" + "true")
             })
         }
     }

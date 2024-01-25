@@ -11,7 +11,7 @@ class ReadyUseCase @Inject constructor(
 
 
     operator fun invoke(code: String, isOwner : Boolean, cells : List<List<Cell>>){
-        println("zizi")
+
         fireStore.setReady(code, isOwner, cells.cellsToDto())
     }
 

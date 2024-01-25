@@ -56,11 +56,11 @@ fun PrepareScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Battlefield(
-                        listBattlefield = listBattlefield, modifierColumn = Modifier
+                        listBattlefield = listBattlefield, modifier = Modifier
                             .size(300.dp)
                     )
                     Battlefield(
-                        listBattlefield = listBattlefield, modifierColumn = Modifier
+                        listBattlefield = listBattlefield, modifier = Modifier
                             .size(300.dp)
                     )
                 }
@@ -74,11 +74,11 @@ fun PrepareScreen(
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Battlefield(
-                        listBattlefield = listBattlefield, modifierColumn = Modifier
+                        listBattlefield = listBattlefield, modifier = Modifier
                             .size(300.dp)
                     )
                     Battlefield(
-                        listBattlefield = listBattlefield, modifierColumn = Modifier
+                        listBattlefield = listBattlefield, modifier = Modifier
                             .size(300.dp)
                     )
                 }

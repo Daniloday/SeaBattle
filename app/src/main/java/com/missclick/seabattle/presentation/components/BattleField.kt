@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -28,130 +26,128 @@ import com.missclick.seabattle.domain.model.Cell
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
 
 
-enum class CellState() {
-    EMPTY, DOT, SHIP_ALIVE, SHIP_DAMAGE
-}
 
-var listBattlefield = listOf<List<CellState>>(
+
+var listBattlefield = listOf<List<Cell>>(
     listOf(
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY
     ),
     listOf(
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY
     ),
     listOf(
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY
     ),
     listOf(
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY
     ),
     listOf(
-        CellState.EMPTY,
-        CellState.DOT,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.SHIP_ALIVE,
-        CellState.EMPTY,
-        CellState.SHIP_DAMAGE,
-        CellState.EMPTY,
-        CellState.EMPTY
+        Cell.EMPTY,
+        Cell.DOT,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.SHIP_ALIVE,
+        Cell.EMPTY,
+        Cell.SHIP_DAMAGE,
+        Cell.EMPTY,
+        Cell.EMPTY
     ),
     listOf(
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY
     ),
     listOf(
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY
     ),
     listOf(
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY
     ),
     listOf(
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY
     ),
     listOf(
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY,
-        CellState.EMPTY
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY,
+        Cell.EMPTY
     )
 )
 
@@ -159,10 +155,10 @@ var numbList = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
 var abcList = listOf("a", "b", "c", "d", "e", "f", "g", "h", "i", "j")
 
 @Composable
-fun Battlefield(listBattlefield: List<List<Cell>>, modifierColumn: Modifier) {
+fun Battlefield(listBattlefield: List<List<Cell>>, modifier: Modifier) {
 
     Column(
-        modifier = modifierColumn
+        modifier = modifier
     ) {
         //numbers
         Row(
@@ -206,37 +202,37 @@ fun Battlefield(listBattlefield: List<List<Cell>>, modifierColumn: Modifier) {
                     ) {
                         for (j in listBattlefield[rowNumber]) {
 
-                                when (j) {
-                                    Cell.EMPTY -> {
-                                        EmptyCellBattlefield(
-                                            modifier = Modifier
-                                                .weight(1f)
-                                                .clickable { })
-                                    }
+                            when (j) {
+                                Cell.EMPTY -> {
+                                    EmptyCellBattlefield(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable { })
+                                }
 
-                                    Cell.DOT -> {
-                                        DotCellBattlefield(modifier = Modifier.weight(1f))
-                                    }
+                                Cell.DOT -> {
+                                    DotCellBattlefield(modifier = Modifier.weight(1f))
+                                }
 
-                                    Cell.SHIP_ALIVE -> {
-                                        ShipAliveCellBattlefield(modifier = Modifier.weight(1f))
-                                    }
+                                Cell.SHIP_ALIVE -> {
+                                    ShipAliveCellBattlefield(modifier = Modifier.weight(1f))
+                                }
 
-                                    Cell.SHIP_DAMAGE -> {
-                                        ShipDamageCellBattlefield(modifier = Modifier.weight(1f))
-                                    }
-
+                                Cell.SHIP_DAMAGE -> {
+                                    ShipDamageCellBattlefield(modifier = Modifier.weight(1f))
                                 }
 
                             }
+
                         }
                     }
                 }
-
             }
 
         }
+
     }
+
 }
 
 @Composable

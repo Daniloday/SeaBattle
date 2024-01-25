@@ -1,15 +1,30 @@
 package com.missclick.seabattle.domain.use_cases
 
-import com.missclick.seabattle.common.Resource
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import com.missclick.seabattle.data.remote.FireStore
+import com.missclick.seabattle.data.remote.dto.CellDto
+import com.missclick.seabattle.data.remote.dto.cellsToDto
+import com.missclick.seabattle.domain.model.Cell
+import javax.inject.Inject
 
-class DoStepUseCase constructor () {
-//    operator fun invoke(xIndex  : Int, yIndex : Int) : Flow<Resource<Nothing>> = flow{
-//        emit(Resource.Loading)
-//        delay(1000)
-//        emit(Resource.Success(null))
-//    }
+class DoStepUseCase @Inject constructor (
+    val fireStore: FireStore
+) {
+
+    operator fun invoke(yIndex: Int, xIndex: Int,  cells: List<List<Cell>>, code: String, isOwner : Boolean){
+
+        val newDtoField = cells.cellsToDto().mapIndexed { index, element, ->
+            if (index == yIndex * 10 + xIndex){
+                CellDto(dot = true, element.ship)
+            }else{
+                element
+            }
+        }
+
+        fireStore.doStep(
+            code = code,
+            isOwner = isOwner,
+            cells = newDtoField
+        )
+    }
 
 }

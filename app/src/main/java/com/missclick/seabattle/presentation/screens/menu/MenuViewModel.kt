@@ -13,6 +13,7 @@ class MenuViewModel @Inject constructor() :
 
 
     override fun obtainEvent(event: MenuEvent) {
+
         when(event){
             is MenuEvent.Next -> {
 

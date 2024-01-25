@@ -17,6 +17,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        A().arrow()
         setContent {
             SeaBattleTheme {
 
@@ -29,6 +30,21 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-    
+
+}
+
+class A() : B(){
+
+    override fun arrow(): Int{
+        return super.arrow() + 10
+
+    }
+
+}
+
+open class B(){
+    open fun arrow(): Int{
+        return 5
+    }
 }
 

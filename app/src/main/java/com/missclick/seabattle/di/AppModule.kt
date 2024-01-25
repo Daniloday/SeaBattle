@@ -3,7 +3,6 @@ package com.missclick.seabattle.di
 import com.missclick.seabattle.data.RepositoryImpl
 import com.missclick.seabattle.data.remote.FireStore
 import com.missclick.seabattle.domain.Repository
-import com.missclick.seabattle.domain.use_cases.CreateRoomUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

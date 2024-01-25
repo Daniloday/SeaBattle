@@ -4,6 +4,7 @@ plugins {
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    kotlin("plugin.serialization")
 //    id ("com.google.firebase.crashlytics")
 }
 
@@ -84,6 +85,12 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-firestore")
 //    implementation("com.google.firebase:firebase-analytics")
+
+    implementation ("com.google.code.gson:gson:2.10.1")
+    implementation("com.squareup.moshi:moshi:1.15.0")
+
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+
 
 
 }

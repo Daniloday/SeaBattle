@@ -8,6 +8,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.missclick.seabattle.presentation.components.Battlefield
 
 @Composable
 fun BattleRoute(navController: NavHostController, battleViewModel: BattleViewModel) {
@@ -19,12 +20,16 @@ fun BattleRoute(navController: NavHostController, battleViewModel: BattleViewMod
         is BattleUiState.Loading -> {
             CircularProgressIndicator()}
         is BattleUiState.Error -> {
-            Text(text = uiStateCurrent.errorName, color = Color.Red, fontSize = 30.sp)
+            Text(text = uiStateCurrent.errorName, color = Color.Red, fontSize = 10.sp)
         }
         is BattleUiState.Success -> {
-            Text(text = uiStateCurrent.field, color = Color.Green,  fontSize = 30.sp)
-            }
+            Text(text = uiStateCurrent.toString(), color = Color.Green, fontSize = 10.sp)
+            Battlefield(listBattlefield = uiStateCurrent.friendCells)
         }
+
+
+        else -> {}
+    }
 
 
 }

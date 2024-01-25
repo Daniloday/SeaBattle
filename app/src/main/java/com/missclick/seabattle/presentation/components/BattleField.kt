@@ -24,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.missclick.seabattle.R
+import com.missclick.seabattle.domain.model.Cell
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
 
 
@@ -158,7 +159,7 @@ var numbList = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
 var abcList = listOf("a", "b", "c", "d", "e", "f", "g", "h", "i", "j")
 
 @Composable
-fun Battlefield(listBattlefield: List<List<CellState>>) {
+fun Battlefield(listBattlefield: List<List<Cell>>) {
 
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -208,22 +209,22 @@ fun Battlefield(listBattlefield: List<List<CellState>>) {
                             for (j in listBattlefield[rowNumber]) {
 
                                 when (j) {
-                                    CellState.EMPTY -> {
+                                    Cell.EMPTY -> {
                                         EmptyCellBattlefield(
                                             modifier = Modifier
                                                 .weight(1f)
                                                 .clickable { })
                                     }
 
-                                    CellState.DOT -> {
+                                    Cell.DOT -> {
                                         DotCellBattlefield(modifier = Modifier.weight(1f))
                                     }
 
-                                    CellState.SHIP_ALIVE -> {
+                                    Cell.SHIP_ALIVE -> {
                                         ShipAliveCellBattlefield(modifier = Modifier.weight(1f))
                                     }
 
-                                    CellState.SHIP_DAMAGE -> {
+                                    Cell.SHIP_DAMAGE -> {
                                         ShipDamageCellBattlefield(modifier = Modifier.weight(1f))
                                     }
 

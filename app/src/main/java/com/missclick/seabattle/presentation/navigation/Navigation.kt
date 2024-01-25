@@ -11,7 +11,7 @@ import com.missclick.seabattle.presentation.screens.battle.BattleViewModel
 import com.missclick.seabattle.presentation.screens.menu.MenuRoute
 import com.missclick.seabattle.presentation.screens.multiplayer.MultiplayerRoute
 import com.missclick.seabattle.presentation.screens.prepare.PrepareRoute
-import com.missclick.seabattle.presentation.waiting.WaitingRoute
+import com.missclick.seabattle.presentation.screens.waiting.WaitingRoute
 
 
 @Composable

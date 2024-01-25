@@ -1,4 +1,4 @@
-package com.missclick.seabattle.presentation.waiting
+package com.missclick.seabattle.presentation.screens.waiting
 
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel

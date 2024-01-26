@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PrepareViewModel @Inject constructor() :
-    BaseViewModel<PrepareUiState, PrepareEvent>(PrepareUiState("default")) {
+    BaseViewModel<PrepareUiState, PrepareEvent>(PrepareUiState()) {
 
 
     override fun obtainEvent(event: PrepareEvent) {
@@ -254,17 +254,41 @@ data class PossiblePositions(
 )
 
 
-sealed class PrepareUiState() {
-    data object Loading : PrepareUiState()
-    data class Error(val errorName: String) : PrepareUiState()
+data class PrepareUiState(
+        val connectionStatus : ConnectionStatus = ConnectionStatus.Nothing
+        //todo here
+)
 
-    data class Success(
-        val friendIsConnected: Boolean,
-        val code: String,
-        val battleFieldList: List<List<Cell>>
-    ) : PrepareUiState()
 
+
+
+sealed class ConnectionStatus(){
+    data object Nothing : ConnectionStatus()
+    data object Waiting : ConnectionStatus()
+    data object Error : ConnectionStatus()
+    data object Success : ConnectionStatus()
 }
+
+
+
+
+
+
+//sealed class PrepareUiState2() {
+//    data class field : List<Cell>,
+//
+//    data object Loading : PrepareUiState2()
+//    data class Error(val errorName: String) : PrepareUiState2()
+//
+//    data class Success(
+//        val friendIsConnected: Boolean,
+//        val code: String,
+//        val battleFieldList: List<List<Cell>>
+//    ) : PrepareUiState2()
+//
+//
+//
+//}
 
 data class CellStatePrepare(
     var isEnabled: Boolean,

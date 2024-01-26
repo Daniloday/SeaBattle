@@ -40,7 +40,7 @@ class PrepareViewModel @Inject constructor() :
                 battle()
             }
 
-            is PrepareEvent.ClickOnСell -> {
+            is PrepareEvent.ClickOnCell -> {
                 clickOnCell(event.row, event.column)
             }
         }
@@ -129,6 +129,15 @@ class PrepareViewModel @Inject constructor() :
 
         val battleFieldListNew = battleFieldList
 
+
+        _uiState.value = uiState.value.copy(
+            battleFieldList = uiState.value.battleFieldList.map {
+               it.map { it2 ->
+                   it2
+               }
+            }
+        )
+
         for (i in randomSet.indices) {
 
             //up
@@ -191,6 +200,7 @@ class PrepareViewModel @Inject constructor() :
 
         for (column in 0 until 10) {
             for (row in 0 until 10 - size) {
+
 
                 var isSuitable = true
                 val suitableList = mutableListOf<PossiblePositions>()
@@ -255,8 +265,8 @@ data class PossiblePositions(
 
 
 data class PrepareUiState(
-        val connectionStatus : ConnectionStatus = ConnectionStatus.Nothing
-        //todo here
+    val connectionStatus : ConnectionStatus = ConnectionStatus.Nothing,
+    val battleFieldList: List<List<Cell>> = listOf(),
 )
 
 
@@ -303,7 +313,7 @@ sealed class PrepareEvent {
     data object Random : PrepareEvent()
     data object Roll : PrepareEvent()
     data object Battle : PrepareEvent()
-    class ClickOnСell(val row: Int, val column: Int) : PrepareEvent()
+    class ClickOnCell(val row: Int, val column: Int) : PrepareEvent()
 
 
 }

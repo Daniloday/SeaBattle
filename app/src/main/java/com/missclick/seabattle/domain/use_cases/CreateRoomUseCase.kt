@@ -24,3 +24,6 @@ class CreateRoomUseCase @Inject constructor (
     operator fun invoke() : Flow<Resource<String>> = fireStore.createRoom().asResult()
 
 }
+
+
+

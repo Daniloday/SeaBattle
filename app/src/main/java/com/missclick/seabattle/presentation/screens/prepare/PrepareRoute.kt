@@ -2,9 +2,7 @@ package com.missclick.seabattle.presentation.screens.prepare
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -24,7 +22,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
@@ -37,6 +34,7 @@ import androidx.navigation.NavController
 import com.missclick.seabattle.R
 import com.missclick.seabattle.presentation.components.BackMark
 import com.missclick.seabattle.presentation.components.Battlefield
+import com.missclick.seabattle.presentation.components.BattlefieldNew
 import com.missclick.seabattle.presentation.components.listBattlefield
 import com.missclick.seabattle.presentation.navigation.NavigationTree
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
@@ -79,9 +77,9 @@ fun PrepareScreen(
                     verticalArrangement = Arrangement.SpaceAround,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Battlefield(
+                    BattlefieldNew(
                         listBattlefield = uiState.battleFieldListEnum, modifier = Modifier
-                            .size(battleFieldSize.dp)
+                            .size(battleFieldSize.dp), obtainEvent
                     )
                     Row(
                         Modifier

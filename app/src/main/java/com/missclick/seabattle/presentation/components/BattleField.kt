@@ -26,8 +26,6 @@ import com.missclick.seabattle.domain.model.Cell
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
 
 
-
-
 var listBattlefield = listOf<List<Cell>>(
     listOf(
         Cell.EMPTY,
@@ -155,7 +153,11 @@ var numbList = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9", "10")
 var abcList = listOf("a", "b", "c", "d", "e", "f", "g", "h", "i", "j")
 
 @Composable
-fun Battlefield(listBattlefield: List<List<Cell>>, modifier: Modifier) {
+fun Battlefield(
+    listBattlefield: List<List<Cell>>,
+    modifier: Modifier,
+    onClick: ((y: Int, x: Int) -> Unit)? = null
+) {
 
     Column(
         modifier = modifier
@@ -179,12 +181,11 @@ fun Battlefield(listBattlefield: List<List<Cell>>, modifier: Modifier) {
 
             //letters
             Column(Modifier.weight(1f)) {
-                for (rowNumber in listBattlefield.indices) {
+                listBattlefield.forEachIndexed { rowIndex, _ ->
                     TextCellBattlefield(
                         modifier = Modifier.weight(1f),
-                        text = abcList[rowNumber]
+                        text = abcList[rowIndex]
                     )
-
                 }
             }
 
@@ -194,20 +195,24 @@ fun Battlefield(listBattlefield: List<List<Cell>>, modifier: Modifier) {
                     .weight(10f)
                     .border(1.dp, AppTheme.colors.primary)
             ) {
-                for (rowNumber in listBattlefield.indices) {
+                listBattlefield.forEachIndexed { rowIndex, row ->
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f)
                     ) {
-                        for (j in listBattlefield[rowNumber]) {
+                        row.forEachIndexed { cellIndex, cell ->
 
-                            when (j) {
+                            when (cell) {
                                 Cell.EMPTY -> {
                                     EmptyCellBattlefield(
                                         modifier = Modifier
                                             .weight(1f)
-                                            .clickable { })
+                                            .clickable(onClick != null) {
+                                                if (onClick != null) {
+                                                    onClick(rowIndex, cellIndex)
+                                                }
+                                            })
                                 }
 
                                 Cell.DOT -> {
@@ -223,6 +228,7 @@ fun Battlefield(listBattlefield: List<List<Cell>>, modifier: Modifier) {
                                 }
 
                             }
+
 
                         }
                     }

@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -28,6 +29,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.input.key.Key
+import androidx.compose.ui.input.key.KeyEvent
+import androidx.compose.ui.input.key.key
+import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -49,7 +54,7 @@ fun MultiplayerRoute(navController: NavController, vm: MultiplayerViewModel = hi
 
     val uiState by vm.uiState.collectAsState()
 
-    if (uiState.connectionStatus is ConnectionStatus.Success){
+    if (uiState.connectionStatus is ConnectionStatus.Success) {
         LaunchedEffect(key1 = Unit, block = {
             navController.navigate(NavigationTree.Battle.route + "/" + uiState.code + "/" + "false")
         })
@@ -69,6 +74,10 @@ fun MultiplayerScreen(
     obtainEvent: (MultiplayerEvent) -> Unit,
     navigateTo: (NavigationTree) -> Unit
 ) {
+
+    val pattern = remember { Regex("^\\d+\$") }
+
+
     Box(modifier = Modifier.fillMaxSize()) {
         Column(
             modifier = Modifier
@@ -84,6 +93,7 @@ fun MultiplayerScreen(
             ) {
                 TextField(
                     value = uiState.code,
+                    singleLine = true,
                     modifier = Modifier
                         .clip(shape = RoundedCornerShape(10.dp))
                         .border(
@@ -105,17 +115,31 @@ fun MultiplayerScreen(
                             style = AppTheme.typography.h3
                         )
                     },
-                    onValueChange = { obtainEvent(MultiplayerEvent.OnCodeChange(it)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                    onValueChange = {
+                        if (it.isEmpty() || it.matches(pattern)) {
+                            if (it.length <= 5){
+                                obtainEvent(MultiplayerEvent.OnCodeChange(it))
+                            }
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number,
+                        autoCorrect = false
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onDone = { obtainEvent(MultiplayerEvent.Connect) },
+                    )
                 )
 
 
-                if (uiState.connectionStatus is ConnectionStatus.Loading){
-                    CircularProgressIndicator(modifier = Modifier
-                        .padding(start = 24.dp)
-                        .size(36.dp)
-                        .align(Alignment.CenterVertically), color = AppTheme.colors.secondary)
-                }else{
+                if (uiState.connectionStatus is ConnectionStatus.Loading) {
+                    CircularProgressIndicator(
+                        modifier = Modifier
+                            .padding(start = 24.dp)
+                            .size(36.dp)
+                            .align(Alignment.CenterVertically), color = AppTheme.colors.secondary
+                    )
+                } else {
                     Image(
                         painter = painterResource(id = R.drawable.select_mark),
                         modifier = Modifier

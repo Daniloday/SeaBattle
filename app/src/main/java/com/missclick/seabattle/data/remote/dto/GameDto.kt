@@ -3,10 +3,16 @@ package com.missclick.seabattle.data.remote.dto
 import com.missclick.seabattle.domain.model.Cell
 import com.missclick.seabattle.domain.model.Game
 
-
+fun generateEmptyField() : List<CellDto>{
+    val list = mutableListOf<CellDto>()
+    repeat(100){
+        list.add(CellDto(dot = false, ship = false))
+    }
+    return list
+}
 data class GameDto(
-    val ownerCells : List<CellDto> = emptyList(),
-    val friendCells : List<CellDto> = emptyList(),
+    val ownerCells : List<CellDto> = generateEmptyField(),
+    val friendCells : List<CellDto> = generateEmptyField(),
     val friendIsConnected : Boolean = false,
     val ownerIsReady : Boolean = false,
     val friendIsReady : Boolean = false,
@@ -51,7 +57,6 @@ fun List<CellDto>.dtoCellsToGame() : List<List<Cell>>{
             val cellRow = mutableListOf<Cell>()
             repeat(10){ index2 ->
                 val cellDto = this[index1 * 10 + index2]
-                println(cellDto)
                 cellRow.add(
                     when{
                         !cellDto.ship && cellDto.dot -> Cell.DOT

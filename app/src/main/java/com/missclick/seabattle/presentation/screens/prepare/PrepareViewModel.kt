@@ -99,7 +99,6 @@ class PrepareViewModel @Inject constructor() :
             }
         }
 
-        println(battleFieldList)
 
         //start to fill cells
 
@@ -115,7 +114,6 @@ class PrepareViewModel @Inject constructor() :
         // isEnabled=false around ship
 
         battleFieldList = disableCellsAroundShip(randomSet, battleFieldList)
-        println(battleFieldList)
 
 
         //checker that all ships on field
@@ -216,7 +214,6 @@ class PrepareViewModel @Inject constructor() :
                 if (isSuitable) {
                     listOfPossiblePositionsToShip.add(suitableList)
 
-                    println(listOfPossiblePositionsToShip)
                 }
 
             }
@@ -242,7 +239,7 @@ class PrepareViewModel @Inject constructor() :
                 if (isSuitable) {
                     listOfPossiblePositionsToShip.add(suitableList)
 
-                    println(listOfPossiblePositionsToShip)
+
                 }
 
             }

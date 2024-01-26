@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 
-sealed class Resource<T>() {
+sealed class Resource<out T>() {
     data class Success<T>(val data: T) : Resource<T>()
     data class Error<T>(val exception: String) : Resource<T>()
     class Loading<T>() : Resource<T>()

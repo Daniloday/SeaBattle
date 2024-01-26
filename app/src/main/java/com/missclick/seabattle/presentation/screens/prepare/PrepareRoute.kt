@@ -80,7 +80,7 @@ fun PrepareScreen(
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Battlefield(
-                        listBattlefield = listBattlefield, modifier = Modifier
+                        listBattlefield = uiState.battleFieldListEnum, modifier = Modifier
                             .size(battleFieldSize.dp)
                     )
                     Row(
@@ -106,7 +106,9 @@ fun PrepareScreen(
                                         .size((battleFieldSize / 10).dp)
                                         .rotate(90f)
                                         .clip(CircleShape)
-                                        .clickable { },
+                                        .clickable {
+                                            obtainEvent(PrepareEvent.UpArrow)
+                                        },
                                     contentDescription = null
                                 )
                                 Row(
@@ -118,7 +120,9 @@ fun PrepareScreen(
                                         modifier = Modifier
                                             .size((battleFieldSize / 10).dp)
                                             .clip(CircleShape)
-                                            .clickable { },
+                                            .clickable {
+                                                obtainEvent(PrepareEvent.LeftArrow)
+                                            },
                                         contentDescription = null
                                     )
                                     Spacer(modifier = Modifier.size((battleFieldSize / 5).dp))
@@ -128,7 +132,9 @@ fun PrepareScreen(
                                             .size((battleFieldSize / 10).dp)
                                             .scale(scaleX = -1f, scaleY = 1f)
                                             .clip(CircleShape)
-                                            .clickable { },
+                                            .clickable {
+                                                obtainEvent(PrepareEvent.RightArrow)
+                                            },
                                         contentDescription = null
                                     )
                                 }
@@ -138,7 +144,9 @@ fun PrepareScreen(
                                         .size((battleFieldSize / 10).dp)
                                         .rotate(-90f)
                                         .clip(CircleShape)
-                                        .clickable { },
+                                        .clickable {
+                                            obtainEvent(PrepareEvent.DownArrow)
+                                        },
                                     contentDescription = null
                                 )
                             }
@@ -158,7 +166,7 @@ fun PrepareScreen(
                                 border = BorderStroke(1.dp, AppTheme.colors.primary),
                                 shape = RoundedCornerShape(50),
                                 onClick = {
-
+                                    obtainEvent(PrepareEvent.Random)
                                 }
                             ) {
                                 Box(Modifier.fillMaxSize()) {
@@ -179,7 +187,7 @@ fun PrepareScreen(
                                 border = BorderStroke(1.dp, AppTheme.colors.primary),
                                 shape = RoundedCornerShape(50),
                                 onClick = {
-
+                                    obtainEvent(PrepareEvent.Roll)
                                 }
                             ) {
                                 Box(Modifier.fillMaxSize()) {
@@ -201,7 +209,7 @@ fun PrepareScreen(
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                 border = BorderStroke(1.dp, AppTheme.colors.primary),
                                 onClick = {
-
+                                    obtainEvent(PrepareEvent.Battle)
                                 }
                             ) {
                                 Box(Modifier.fillMaxSize()) {

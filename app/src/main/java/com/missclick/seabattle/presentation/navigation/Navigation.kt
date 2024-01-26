@@ -20,11 +20,12 @@ fun Navigation(){
     val navController = rememberNavController()
 
 
-    NavHost(navController = navController, startDestination = NavigationTree.Menu.route){
+    NavHost(navController = navController, startDestination = NavigationTree.Prepare.route){
 
         composable(NavigationTree.Menu.route){
             MenuRoute(navController)
         }
+
         composable(NavigationTree.Multiplayer.route){
             MultiplayerRoute(navController)
         }

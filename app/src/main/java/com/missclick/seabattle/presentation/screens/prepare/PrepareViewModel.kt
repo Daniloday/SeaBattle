@@ -465,7 +465,7 @@ class PrepareViewModel @Inject constructor() :
                         listOfShipSurroundingsCells.add(
                             CellPosition(
                                 it2.shipCells[i].row - 1,
-                                it2.shipCells[i].column
+                                it2.shipCells[i].column - 1
                             )
                         )
                     }
@@ -533,16 +533,37 @@ class PrepareViewModel @Inject constructor() :
 
         println("do")
 
-        println("dots: ${uiState.value.battleFieldListEnum.forEach {
-            it.filter { it2-> it2 == Cell.DOT }
-        }}")
-        println("ships: ${uiState.value.battleFieldListEnum.forEach {
-            it.filter { it2-> it2 == Cell.SHIP_ALIVE }
-        }}")
-        println("empty: ${uiState.value.battleFieldListEnum.forEach {
-            it.filter { it2-> it2 == Cell.EMPTY }
-        }}")
-        println("conflict: $conflict")
+        var listDots = uiState.value.battleFieldListEnum
+
+        for (i in 0 until 10) {
+            for (j in listDots.indices) {
+                if (listDots[i][j] == Cell.DOT) dots += 1
+            }
+        }
+
+        println("dots: $dots")
+
+        var listShipAlive = uiState.value.battleFieldListEnum
+
+        for (i in 0 until 10) {
+            for (j in listShipAlive.indices) {
+                if (listShipAlive[i][j] == Cell.SHIP_ALIVE) ships += 1
+            }
+        }
+
+        println("ships: $ships")
+
+        var listEmpty = uiState.value.battleFieldListEnum
+
+        for (i in 0 until 10) {
+            for (j in listEmpty.indices) {
+                if (listEmpty[i][j] == Cell.EMPTY) empty += 1
+            }
+        }
+
+        println("empty: ${empty}")
+
+        println("counter: $counter")
 
 
 
@@ -553,27 +574,10 @@ class PrepareViewModel @Inject constructor() :
             _uiState.value = uiState.value.copy(
                 battleFieldListEnum = uiState.value.battleFieldListEnum.mapIndexed() { ind, it ->
                     it.mapIndexed { ind2, it2 ->
-                        counter+=1
-//                        println(it2)
-//                        println("$ind $ind2")
+                        counter += 1
                         if (ind == cellPosition.row && ind2 == cellPosition.column) {
-                            if (it2 == Cell.SHIP_ALIVE) conflict += 1
-                            dots += 1
                             Cell.DOT
                         } else {
-                            if (it2 == Cell.SHIP_ALIVE) {
-                                ships += 1
-
-                            } else {
-                                empty += 1
-
-                            }
-//                            println("counter: $counter")
-//                            println("dots: $dots")
-//                            println("ships: $ships")
-//                            println("empty: $empty")
-//                            println("conflict: $conflict")
-//                            println("///////////////////")
                             it2
                         }
                     }
@@ -581,16 +585,44 @@ class PrepareViewModel @Inject constructor() :
             )
         }
 
-        println("dots: ${uiState.value.battleFieldListEnum.forEach {
-            it.filter { it2-> it2 == Cell.DOT }
-        }}")
-        println("ships: ${uiState.value.battleFieldListEnum.forEach {
-            it.filter { it2-> it2 == Cell.SHIP_ALIVE }
-        }}")
-        println("empty: ${uiState.value.battleFieldListEnum.forEach {
-            it.filter { it2-> it2 == Cell.EMPTY }
-        }}")
 
+
+        println("after")
+        println("counter: ${counter}")
+
+        dots = 0
+        ships = 0
+        empty = 0
+
+        listDots = uiState.value.battleFieldListEnum
+
+        for (i in 0 until 10) {
+            for (j in listDots.indices) {
+                if (listDots[i][j] == Cell.DOT) dots += 1
+            }
+        }
+
+        println("dots: $dots")
+
+        listShipAlive = uiState.value.battleFieldListEnum
+
+        for (i in 0 until 10) {
+            for (j in listShipAlive.indices) {
+                if (listShipAlive[i][j] == Cell.SHIP_ALIVE) ships += 1
+            }
+        }
+
+        println("ships: $ships")
+
+        listEmpty = uiState.value.battleFieldListEnum
+
+        for (i in 0 until 10) {
+            for (j in listEmpty.indices) {
+                if (listEmpty[i][j] == Cell.EMPTY) empty += 1
+            }
+        }
+
+        println("empty: ${empty}")
 
 
 

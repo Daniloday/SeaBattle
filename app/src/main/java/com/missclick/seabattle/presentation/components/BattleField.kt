@@ -23,6 +23,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.missclick.seabattle.R
 import com.missclick.seabattle.domain.model.Cell
+import com.missclick.seabattle.domain.model.CellPrepare
+import com.missclick.seabattle.presentation.screens.prepare.PrepareEvent
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
 
 
@@ -226,7 +228,6 @@ fun Battlefield(
                                 Cell.SHIP_DAMAGE -> {
                                     ShipDamageCellBattlefield(modifier = Modifier.weight(1f))
                                 }
-
                             }
 
 
@@ -240,6 +241,108 @@ fun Battlefield(
     }
 
 }
+
+@Composable
+fun BattlefieldNew(
+    listBattlefield: List<List<CellPrepare>>,
+    modifier: Modifier,
+    obtainEvent: (PrepareEvent) -> Unit
+) {
+
+    Column(
+        modifier = modifier
+    ) {
+        //numbers
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+        ) {
+            Spacer(modifier = Modifier.weight(1f))
+            for (letter in numbList) {
+                TextCellBattlefield(modifier = Modifier.weight(1f), text = letter)
+            }
+        }
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(10f)
+        ) {
+
+            //letters
+            Column(Modifier.weight(1f)) {
+                for (rowNumber in listBattlefield.indices) {
+                    TextCellBattlefield(
+                        modifier = Modifier.weight(1f),
+                        text = abcList[rowNumber]
+                    )
+
+                }
+            }
+
+            //battlefield
+            Column(
+                Modifier
+                    .weight(10f)
+                    .border(1.dp, AppTheme.colors.primary)
+            ) {
+                for (rowNumber in listBattlefield.indices) {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                    ) {
+                        for (columnNumber in listBattlefield[rowNumber].indices) {
+
+                            when (listBattlefield[rowNumber][columnNumber]) {
+                                CellPrepare.EMPTY -> {
+                                    EmptyCellBattlefield(
+                                        modifier = Modifier
+                                            .weight(1f))
+                                }
+
+                                CellPrepare.DOT -> {
+                                    DotCellBattlefield(modifier = Modifier.weight(1f))
+                                }
+
+                                CellPrepare.SHIP_ALIVE -> {
+                                    ShipAliveCellBattlefield(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                            .clickable {
+
+                                                obtainEvent(
+                                                    PrepareEvent.ClickOnCell(
+                                                        rowNumber,
+                                                        columnNumber
+                                                    )
+                                                )
+                                            })
+                                }
+
+                                CellPrepare.SHIP_DAMAGE -> {
+                                    ShipDamageCellBattlefield(
+                                        modifier = Modifier
+                                            .weight(1f)
+                                    )
+                                }
+
+                                CellPrepare.SHIP_SELECTED -> {
+                                    ShipSelectedCellBattlefield(modifier = Modifier.weight(1f))
+                                }
+                            }
+
+                        }
+                    }
+                }
+            }
+
+        }
+
+    }
+
+}
+
 
 @Composable
 fun TextCellBattlefield(modifier: Modifier, text: String) {
@@ -329,6 +432,19 @@ fun ShipDamageCellBattlefield(modifier: Modifier) {
                     ),
 
                 )
+        }
+    }
+}
+
+@Composable
+fun ShipSelectedCellBattlefield(modifier: Modifier) {
+    Card(
+        modifier = modifier,
+        border = BorderStroke(2.dp, AppTheme.colors.shipSelected),
+        shape = RectangleShape
+    ) {
+        Box(modifier = Modifier.fillMaxSize()) {
+
         }
     }
 }

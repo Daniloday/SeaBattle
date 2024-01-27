@@ -11,7 +11,8 @@ data class Colors (
     val secondary: Color,
     val secondaryShadow: Color,
     val error : Color,
-    val success : Color
+    val success : Color,
+    val shipSelected : Color,
 )
 
 
@@ -24,8 +25,7 @@ val lightColorPalette = Colors(
     secondaryShadow = Color(0x4D817D7D),
     error = Color(0xFFE01313),
     success = Color(0xFF50E013),
-
-
+    shipSelected = Color(0xFF0E7713)
 )
 
 

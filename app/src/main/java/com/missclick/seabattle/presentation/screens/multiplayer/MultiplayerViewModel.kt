@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.missclick.seabattle.common.BaseViewModel
 import com.missclick.seabattle.common.Resource
+import com.missclick.seabattle.domain.use_cases.ConnectToRoomUseCase
 import com.missclick.seabattle.domain.use_cases.ObserveRoomUseCase
 import com.missclick.seabattle.presentation.navigation.NavigationKeys
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,7 +14,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MultiplayerViewModel @Inject constructor(
-    private val observeRoom: ObserveRoomUseCase
+    private val connectToRoom: ConnectToRoomUseCase
 ) :
     BaseViewModel<MultiplayerUiState, MultiplayerEvent>(MultiplayerUiState()){
 
@@ -32,7 +33,7 @@ class MultiplayerViewModel @Inject constructor(
     private fun connect(){
         if (uiState.value.code.length == 5){
             viewModelScope.launch {
-                observeRoom(code = uiState.value.code, isOwner = false).collect{
+                connectToRoom(code = uiState.value.code).collect{
                     _uiState.value = uiState.value.copy(
                         connectionStatus = when(it){
                             is Resource.Loading -> ConnectionStatus.Loading

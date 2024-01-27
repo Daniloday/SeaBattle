@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import com.missclick.seabattle.R
+import com.missclick.seabattle.domain.model.Cell
 import com.missclick.seabattle.presentation.components.BackMark
 import com.missclick.seabattle.presentation.components.Battlefield
 import com.missclick.seabattle.presentation.components.Connecting
@@ -93,7 +94,17 @@ fun BattleSuccess(uiState: BattleUiState.Success, obtainEvent: (BattleEvent) -> 
                             )
                     )
                     Battlefield(
-                        listBattlefield = uiState.friendCells, modifier = Modifier
+                        listBattlefield = uiState.friendCells
+                        .map {row ->
+                                                                  row.map {
+                                                                      if (it == Cell.SHIP_ALIVE){
+                                                                          Cell.EMPTY
+                                                                      }else{
+                                                                          it
+                                                                      }
+                                                                  }
+                        }
+                , modifier = Modifier
                             .size(battleFieldSize.dp),
                         onClick = if (uiState.yourMove) { y, x ->
                             obtainEvent(BattleEvent.DoStep(y = y, x = x))

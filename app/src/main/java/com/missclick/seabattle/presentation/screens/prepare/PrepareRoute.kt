@@ -48,7 +48,9 @@ fun PrepareRoute(navController: NavController, vm: PrepareViewModel = hiltViewMo
     PrepareScreen(
         uiState = uiState,
         obtainEvent = vm::obtainEvent,
-        navigateTo = { navController.navigate(it.route) }
+        navigateTo = {
+            println("navigate")
+            navController.navigate(it) }
     )
 
 }
@@ -58,7 +60,7 @@ fun PrepareRoute(navController: NavController, vm: PrepareViewModel = hiltViewMo
 fun PrepareScreen(
     uiState: PrepareUiState,
     obtainEvent: (PrepareEvent) -> Unit,
-    navigateTo: (NavigationTree) -> Unit
+    navigateTo: (String) -> Unit
 ) {
 
     Box(modifier = Modifier.fillMaxSize()) {
@@ -208,6 +210,8 @@ fun PrepareScreen(
                                 border = BorderStroke(1.dp, AppTheme.colors.primary),
                                 onClick = {
                                     obtainEvent(PrepareEvent.Battle)
+                                    println("click card")
+                                    navigateTo(NavigationTree.Battle.route + "/" + uiState.code + "/" + uiState.isOwner.toString())
                                 }
                             ) {
                                 Box(Modifier.fillMaxSize()) {
@@ -351,7 +355,9 @@ fun PrepareScreen(
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                 border = BorderStroke(1.dp, AppTheme.colors.primary),
                                 onClick = {
-
+                                    println("click card")
+                                    obtainEvent(PrepareEvent.Battle)
+                                    navigateTo(NavigationTree.Battle.route)
                                 }
                             ) {
                                 Box(Modifier.fillMaxSize()) {

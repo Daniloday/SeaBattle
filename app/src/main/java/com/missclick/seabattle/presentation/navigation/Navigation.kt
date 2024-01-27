@@ -20,7 +20,7 @@ fun Navigation(){
     val navController = rememberNavController()
 
 
-    NavHost(navController = navController, startDestination = NavigationTree.Prepare.route){
+    NavHost(navController = navController, startDestination = NavigationTree.Menu.route){
 
         composable(NavigationTree.Menu.route){
             MenuRoute(navController)
@@ -35,7 +35,7 @@ fun Navigation(){
             BattleRoute(navController)
         }
 
-        composable(NavigationTree.Prepare.route){
+        composable(NavigationTree.Prepare.route + "/{${NavigationKeys.CODE}}/{${NavigationKeys.IS_OWNER}}"){
             PrepareRoute(navController)
         }
 

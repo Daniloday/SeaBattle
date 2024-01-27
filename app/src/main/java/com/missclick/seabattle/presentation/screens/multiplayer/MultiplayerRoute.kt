@@ -56,7 +56,7 @@ fun MultiplayerRoute(navController: NavController, vm: MultiplayerViewModel = hi
 
     if (uiState.connectionStatus is ConnectionStatus.Success) {
         LaunchedEffect(key1 = Unit, block = {
-            navController.navigate(NavigationTree.Battle.route + "/" + uiState.code + "/" + "false")
+            navController.navigate(NavigationTree.Prepare.route + "/" + uiState.code + "/" + "false")
         })
     }
 

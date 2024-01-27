@@ -25,7 +25,7 @@ class FireStore @Inject constructor() {
 
     private val db by lazy { Firebase.firestore }
 
-    fun connect(code : String) = callbackFlow<Nothing?>{
+    fun connect(code : String) = callbackFlow{
         db.collection(Constants.FIRE_STORE_COLLECTION_NAME).document(code)
             .update("friendIsConnected", true)
             .addOnSuccessListener {
@@ -91,21 +91,25 @@ class FireStore @Inject constructor() {
 
     }
 
-    fun doStep(code : String, isOwner : Boolean, cells : List<CellDto>){
+    fun doStep(code : String, isOwner : Boolean, cells : List<CellDto>, change : Boolean){
+        val map = if (!isOwner){
+            mutableMapOf<String,Any>(
+                "ownerCells" to cells,
+            )
+        }else{
+            mutableMapOf<String, Any>(
+                "friendCells" to cells,
+            )
+        }
+
+        if (change){
+            map["moveOwner"] = !isOwner
+        }
+
+
         db.collection(Constants.FIRE_STORE_COLLECTION_NAME).document(code)
             .update(
-                if (!isOwner){
-                    mapOf(
-                        "ownerCells" to cells,
-                        "moveOwner" to true
-                    )
-                }else{
-                    mapOf(
-                        "friendCells" to cells,
-                        "moveOwner" to false
-                    )
-                }
-
+                map
             )
 
     }

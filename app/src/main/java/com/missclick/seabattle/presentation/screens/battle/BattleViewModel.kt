@@ -46,11 +46,16 @@ class BattleViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        BattleUiState.Success(
-                            yourCells = it.data.yourCells,
-                            friendCells = it.data.friendCells,
-                            yourMove = it.data.yourMove
-                        )
+                        if (it.data.friendIsReady && it.data.youAreReady){
+                            BattleUiState.Success(
+                                yourCells = it.data.yourCells,
+                                friendCells = it.data.friendCells,
+                                yourMove = it.data.yourMove
+                            )
+                        }else{
+                            BattleUiState.Loading
+                        }
+
                     }
                 }
             }
@@ -67,10 +72,12 @@ class BattleViewModel @Inject constructor(
 
     private fun doStep(y: Int, x: Int) {
         val success = uiState.value
-        if (success is BattleUiState.Success && success.friendCells[y][x] == Cell.EMPTY) {
-            _uiState.value = success.copy(
-                yourMove = false
-            )
+        if (success is BattleUiState.Success) {
+            if (success.friendCells[y][x] != Cell.SHIP_ALIVE){
+                _uiState.value = success.copy(
+                    yourMove = false
+                )
+            }
             doStepUseCase(
                 yIndex = y, xIndex = x, friendCells = success.friendCells,
                 code = code,

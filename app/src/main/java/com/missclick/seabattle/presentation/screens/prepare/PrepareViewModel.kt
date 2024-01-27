@@ -1,8 +1,11 @@
 package com.missclick.seabattle.presentation.screens.prepare
 
+import androidx.lifecycle.SavedStateHandle
 import com.missclick.seabattle.common.BaseViewModel
 import com.missclick.seabattle.domain.model.Cell
 import com.missclick.seabattle.domain.model.CellPrepare
+import com.missclick.seabattle.domain.use_cases.ReadyUseCase
+import com.missclick.seabattle.presentation.navigation.NavigationKeys
 import com.missclick.seabattle.presentation.screens.prepare.models.CellPosition
 import com.missclick.seabattle.presentation.screens.prepare.models.CellStatePrepare
 import com.missclick.seabattle.presentation.screens.prepare.models.ShipsDataClass
@@ -10,10 +13,14 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
-class PrepareViewModel @Inject constructor() :
+class PrepareViewModel @Inject constructor(
+    private val ready: ReadyUseCase,
+    savedStateHandle: SavedStateHandle
+) :
     BaseViewModel<PrepareUiState, PrepareEvent>(PrepareUiState()) {
 
-
+    private val isOwner : Boolean = savedStateHandle.get<String>(NavigationKeys.IS_OWNER).toString().toBoolean()
+    private val code : String = savedStateHandle[NavigationKeys.CODE]!!
     override fun obtainEvent(event: PrepareEvent) {
         when (event) {
             is PrepareEvent.UpArrow -> {
@@ -51,7 +58,10 @@ class PrepareViewModel @Inject constructor() :
     }
 
     init {
-
+        _uiState.value = uiState.value.copy(
+            code = code,
+            isOwner = isOwner
+        )
         random()
     }
 
@@ -629,7 +639,20 @@ class PrepareViewModel @Inject constructor() :
 
     private fun roll() {}
 
-    private fun battle() {}
+    private fun battle() {
+        ready.invoke(
+            cells = uiState.value.battleFieldListEnum.map { row ->
+                row.map {
+                    when(it){
+                        CellPrepare.SHIP_ALIVE, CellPrepare.SHIP_SELECTED -> Cell.SHIP_ALIVE
+                        else -> Cell.EMPTY
+                    }
+                }
+            },
+            isOwner = isOwner,
+            code = code
+        )
+    }
     private fun clickOnCell(row: Int, column: Int) {
 
         var shipPairIndexes: Pair<Int, Int> = Pair(-1, -1)
@@ -693,7 +716,9 @@ data class PrepareUiState(
     val battleFieldListEnum: List<List<CellPrepare>> = listOf(),
     val battleFieldList: List<List<CellStatePrepare>> = listOf(),
     val shipsList: List<List<ShipsDataClass>> = listOf(),
-    val isCanGoBattle: Boolean = false
+    val isCanGoBattle: Boolean = false,
+    val code : String = "",
+    val isOwner : Boolean = true
 )
 
 

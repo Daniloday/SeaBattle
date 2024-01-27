@@ -71,7 +71,7 @@ fun WaitingSuccess(uiState: WaitingUiState.Success, navigateTo: (String) -> Unit
         if (uiState.friendIsConnected) {
             LaunchedEffect(key1 = Unit, block = {
                 println("navigate from waiting")
-                navigateTo(NavigationTree.Battle.route + "/" + uiState.code + "/" + "true")
+                navigateTo(NavigationTree.Prepare.route + "/" + uiState.code + "/" + "true")
             })
         }
     }

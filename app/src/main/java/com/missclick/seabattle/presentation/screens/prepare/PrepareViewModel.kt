@@ -684,14 +684,46 @@ class PrepareViewModel @Inject constructor(
             }
         }
 
-        shipSet.map {
-            val column = it.row
-            it.row = it.column
-            it.column = column
-            it
+        var compensation = 0
+        var rowOrColumn = ""
+
+        try {
+            if (shipSet[0].row == shipSet[1].row) {
+                shipSet.mapIndexed() { index, it ->
+                    it.row = shipSet[0].row + index
+                    if (it.row > 9) compensation = it.row - 9
+                    rowOrColumn = "row"
+                    it.column = shipSet[0].column
+                    it
+                }
+            } else {
+                shipSet.mapIndexed() { index, it ->
+                    it.row = shipSet[0].row
+                    it.column = shipSet[0].column + index
+                    if (it.column > 9) compensation = it.column - 9
+                    rowOrColumn = "column"
+                    it
+                }
+            }
+
+        } catch (_: Exception) {
+
         }
 
-        println(shipSet)
+        when(rowOrColumn){
+            "row" -> {
+                shipSet.mapIndexed() { index, it ->
+                    it.row = it.row - compensation
+                    it
+                }
+            }
+            "column" -> {
+                shipSet.mapIndexed() { index, it ->
+                    it.column = it.column - compensation
+                    it
+                }
+            }
+        }
 
         uiState.value.shipsList.map {
             it.map { it2 ->

@@ -14,29 +14,28 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PrepareViewModel @Inject constructor(
-    private val ready: ReadyUseCase,
-    savedStateHandle: SavedStateHandle
-) :
-    BaseViewModel<PrepareUiState, PrepareEvent>(PrepareUiState()) {
+    private val ready: ReadyUseCase, savedStateHandle: SavedStateHandle
+) : BaseViewModel<PrepareUiState, PrepareEvent>(PrepareUiState()) {
 
-    private val isOwner : Boolean = savedStateHandle.get<String>(NavigationKeys.IS_OWNER).toString().toBoolean()
-    private val code : String = savedStateHandle[NavigationKeys.CODE]!!
+    private val isOwner: Boolean =
+        savedStateHandle.get<String>(NavigationKeys.IS_OWNER).toString().toBoolean()
+    private val code: String = savedStateHandle[NavigationKeys.CODE]!!
     override fun obtainEvent(event: PrepareEvent) {
         when (event) {
             is PrepareEvent.UpArrow -> {
-                upArrow()
+                directArrow("up")
             }
 
             is PrepareEvent.DownArrow -> {
-                downArrow()
+                directArrow("down")
             }
 
             is PrepareEvent.LeftArrow -> {
-                leftArrow()
+                directArrow("left")
             }
 
             is PrepareEvent.RightArrow -> {
-                rightArrow()
+                directArrow("right")
             }
 
             is PrepareEvent.Random -> {
@@ -59,55 +58,196 @@ class PrepareViewModel @Inject constructor(
 
     init {
         _uiState.value = uiState.value.copy(
-            code = code,
-            isOwner = isOwner
+            code = code, isOwner = isOwner
         )
         random()
     }
 
-    private fun upArrow() {
-        val ship: CellPosition
+    private fun directArrow(direction: String) {
+        var ship: MutableList<CellPosition> = mutableListOf()
+        var oldShip: MutableList<CellPosition> = mutableListOf()
 
-//        uiState.value.shipsList.forEach {
-//
-//        }
+        uiState.value.shipsList.forEach {
+            it.forEach { it2 ->
+                if (it2.isSelected) {
+                    oldShip = it2.shipCells.toMutableList()
+                }
+            }
+        }
+
+        if (isPossibleToMove(direction, oldShip)) {
+
+            ship = oldShip.map {
+                when (direction) {
+                    "up" -> {
+                        it.row = it.row - 1
+                    }
+
+                    "down" -> {
+                        it.row = it.row + 1
+                    }
+
+                    "left" -> {
+                        it.column = it.column - 1
+                    }
+
+                    "right" -> {
+                        it.column = it.column + 1
+                    }
+                }
+                it
+            }.toMutableList()
+
+            _uiState.value = uiState.value.copy(
+                shipsList = uiState.value.shipsList.map {
+                    it.map { it2 ->
+                        if (it2.isSelected) {
+                            it2.shipCells = ship.toList()
+                            it2
+                        } else {
+                            it2
+                        }
+                    }
+                    it
+                },
+            )
+
+
+            make_battleFieldList_from_shipList()
+
+            make_battleFieldListEnum_from_battleFieldList()
+
+            colorSelectedShip()
+
+            _uiState.value = uiState.value.copy(isCanGoBattle = readyToBattle())
+        }
+    }
+
+    private fun colorSelectedShip() {
+
+
+        var ship: MutableList<CellPosition> = mutableListOf()
+
+        uiState.value.shipsList.forEach {
+            it.forEach { it2 ->
+                if (it2.isSelected) {
+                    ship = it2.shipCells.toMutableList()
+                }
+            }
+        }
+
+
+        _uiState.value = uiState.value.copy(
+            battleFieldListEnum = uiState.value.battleFieldListEnum.mapIndexed { rowIndex, row ->
+                row.mapIndexed { columnIndex, cell ->
+
+                    if (CellPosition(
+                            rowIndex, columnIndex
+                        ) in ship
+                    ) {
+                        CellPrepare.SHIP_SELECTED
+                    } else {
+                        cell
+                    }
+
+
+                }
+            }
+        )
+
 
     }
-    private fun downArrow() {}
-    private fun leftArrow() {}
-    private fun rightArrow() {}
 
-    private fun isPossibleToMove(
+
+    private fun make_battleFieldList_from_shipList() {
+        _uiState.value = uiState.value.copy(
+            battleFieldList = uiState.value.battleFieldList.mapIndexed() { index, cellStatePrepares ->
+                cellStatePrepares.mapIndexed { index2, cellStatePrepare2 ->
+                    cellStatePrepare2.isEnabled = true
+                    cellStatePrepare2.isShip = false
+
+
+                    uiState.value.shipsList.forEach {
+                        it.forEach { it2 ->
+
+                            for (i in it2.shipCells) {
+                                if (CellPosition(index, index2) == i) {
+                                    cellStatePrepare2.isEnabled = false
+                                    cellStatePrepare2.isShip = true
+                                }
+                            }
+
+                        }
+                    }
+                    cellStatePrepare2
+
+                }
+            }
+        )
+
+        uiState.value.shipsList.forEach {
+            it.forEach { it2 ->
+                disableCellsAroundShip(
+                    it2.shipCells.toMutableList(),
+                    uiState.value.battleFieldList.map { it3 -> it3.toMutableList() }.toMutableList()
+                )
+
+            }
+        }
+    }
+
+    private fun make_battleFieldListEnum_from_battleFieldList() {
+
+        _uiState.value = uiState.value.copy(
+            battleFieldListEnum = uiState.value.battleFieldList.map {
+                it.map { it2 ->
+                    if (it2.isShip) {
+                        CellPrepare.SHIP_ALIVE
+
+                    } else {
+                        CellPrepare.EMPTY
+                    }
+                }
+            }
+        )
+
+    }
+
+
+    fun isPossibleToMove(
         direction: String, listCellsToMove: MutableList<CellPosition>
     ): Boolean {
+
+        var returnBool = true
 
         when (direction) {
             "up" -> {
                 listCellsToMove.forEach { it ->
-                    if (it.row - 1 in 0 until 10) return true
+                    if (it.row - 1 !in 0 until 10) returnBool = false
+
                 }
             }
 
             "down" -> {
                 listCellsToMove.forEach { it ->
-                    if (it.row + 1 in 0 until 10) return true
+                    if (it.row + 1 !in 0 until 10) returnBool = false
                 }
             }
 
             "left" -> {
                 listCellsToMove.forEach { it ->
-                    if (it.column - 1 in 0 until 10) return true
+                    if (it.column - 1 !in 0 until 10) returnBool = false
                 }
             }
 
             "right" -> {
                 listCellsToMove.forEach { it ->
-                    if (it.column + 1 in 0 until 10) return true
+                    if (it.column + 1 !in 0 until 10) returnBool = false
                 }
             }
         }
 
-        return false
+        return returnBool
     }
 
     private fun random() {
@@ -220,11 +360,9 @@ class PrepareViewModel @Inject constructor(
 
         //checker that all ships on field
 
-        println(readyToBattle())
-
-//        _uiState.value = uiState.value.copy(
-//            isCanGoBattle = readyToBattle()
-//        )
+        _uiState.value = uiState.value.copy(
+            isCanGoBattle = readyToBattle()
+        )
 
     }
 
@@ -392,7 +530,7 @@ class PrepareViewModel @Inject constructor(
 
     private fun readyToBattle(): Boolean {
 
-        val listOfAllShipsCells = mutableListOf<CellPosition>()
+        var listOfAllShipsCells = mutableListOf<CellPosition>()
 
         uiState.value.shipsList.forEach {
             it.forEach { it2 ->
@@ -402,267 +540,235 @@ class PrepareViewModel @Inject constructor(
             }
         }
 
-        if (listOfAllShipsCells.size != 20) return false
+        listOfAllShipsCells = listOfAllShipsCells.toSet().toMutableList()
 
-        val listOfShipSurroundingsCells = mutableListOf<CellPosition>()
-
-        uiState.value.shipsList.forEach {
-            it.forEach { it2 ->
-                it2.shipCells.forEachIndexed() { i, it3 ->
-                    //up
-                    if (it2.shipCells[i].row - 1 in 0 until 10) {
-                        listOfShipSurroundingsCells.add(
-                            CellPosition(
-                                it2.shipCells[i].row - 1, it2.shipCells[i].column
-                            )
-                        )
-                    }
-
-                    //down
-                    if (it2.shipCells[i].row + 1 in 0 until 10) {
-                        listOfShipSurroundingsCells.add(
-                            CellPosition(
-                                it2.shipCells[i].row + 1, it2.shipCells[i].column
-                            )
-                        )
-                    }
-
-                    //left
-                    if (it2.shipCells[i].column - 1 in 0 until 10) {
-                        listOfShipSurroundingsCells.add(
-                            CellPosition(
-                                it2.shipCells[i].row, it2.shipCells[i].column - 1
-                            )
-                        )
-                    }
-
-                    //right
-                    if (it2.shipCells[i].column + 1 in 0 until 10) {
-                        listOfShipSurroundingsCells.add(
-                            CellPosition(
-                                it2.shipCells[i].row, it2.shipCells[i].column + 1
-                            )
-                        )
-                    }
-
-                    //up-left
-                    if (it2.shipCells[i].row - 1 in 0 until 10 && it2.shipCells[i].column - 1 in 0 until 10) {
-                        listOfShipSurroundingsCells.add(
-                            CellPosition(
-                                it2.shipCells[i].row - 1, it2.shipCells[i].column - 1
-                            )
-                        )
-                    }
-
-                    //up-right
-                    if (it2.shipCells[i].row - 1 in 0 until 10 && it2.shipCells[i].column + 1 in 0 until 10) {
-                        listOfShipSurroundingsCells.add(
-                            CellPosition(
-                                it2.shipCells[i].row - 1, it2.shipCells[i].column + 1
-                            )
-                        )
-                    }
-
-                    //down-left
-                    if (it2.shipCells[i].row + 1 in 0 until 10 && it2.shipCells[i].column - 1 in 0 until 10) {
-                        listOfShipSurroundingsCells.add(
-                            CellPosition(
-                                it2.shipCells[i].row + 1, it2.shipCells[i].column - 1
-                            )
-                        )
-                    }
-
-                    //down-right
-                    if (it2.shipCells[i].row + 1 in 0 until 10 && it2.shipCells[i].column + 1 in 0 until 10) {
-                        listOfShipSurroundingsCells.add(
-                            CellPosition(
-                                it2.shipCells[i].row + 1, it2.shipCells[i].column + 1
-                            )
-                        )
-                    }
-
-                }
-            }
+        if (listOfAllShipsCells.size != 20) {
+            println("<20")
+            return false
         }
 
-
-//        println(listOfShipSurroundingsCells.size)
-//
-//        println(listOfShipSurroundingsCells.toSet())
-
-        println(listOfShipSurroundingsCells.toSet().size)
-
-
-        println(listOfShipSurroundingsCells.toSet().filter {
-            it !in listOfAllShipsCells
-        }.size)
-
-
-        var counter = 0
-        var dots = 0
-        var ships = 0
-        var empty = 0
         var conflict = 0
+        var counter = 0
 
+        var listOfShipSurroundingsCells: MutableList<CellPosition> = mutableListOf()
 
-//        println("dots: $dots")
-//        println("ships: $ships")
-//        println("empty: $empty")
-//        println("conflict: $conflict")
-
-
-        println("do")
-
-        var listDots = uiState.value.battleFieldListEnum
-
-        for (i in 0 until 10) {
-            for (j in listDots.indices) {
-                if (listDots[i][j] == CellPrepare.DOT) dots += 1
-            }
-        }
-
-        println("dots: $dots")
-
-        var listShipAlive = uiState.value.battleFieldListEnum
-
-        for (i in 0 until 10) {
-            for (j in listShipAlive.indices) {
-                if (listShipAlive[i][j] == CellPrepare.SHIP_ALIVE) ships += 1
-            }
-        }
-
-        println("ships: $ships")
-
-        var listEmpty = uiState.value.battleFieldListEnum
-
-        for (i in 0 until 10) {
-            for (j in listEmpty.indices) {
-                if (listEmpty[i][j] == CellPrepare.EMPTY) empty += 1
-            }
-        }
-
-        println("empty: ${empty}")
-
-        println("counter: $counter")
-
-
-//
-//        listOfShipSurroundingsCells.toSet().filter {
-//            it !in listOfAllShipsCells
-//        }.forEachIndexed() { index, cellPosition ->
-//
-//            _uiState.value = uiState.value.copy(
-//                battleFieldListEnum = uiState.value.battleFieldListEnum.mapIndexed() { ind, it ->
-//                    it.mapIndexed { ind2, it2 ->
-//                        counter += 1
-//                        if (ind == cellPosition.row && ind2 == cellPosition.column) {
-//                            Cell.DOT
-//                        } else {
-//                            it2
-//                        }
-//                    }
-//                }
-//            )
-//        }
-
-
-        val filteredCells = listOfShipSurroundingsCells.toSet() - listOfAllShipsCells
-
-        val updatedBattleField = uiState.value.battleFieldListEnum.mapIndexed { rowIndex, row ->
-            row.mapIndexed { columnIndex, cell ->
-                counter += 1
-                val cellPosition = CellPosition(rowIndex, columnIndex)
-                if (cellPosition in filteredCells) {
-                    if (cell == CellPrepare.SHIP_ALIVE) conflict += 1
-                    dots += 1
-                    CellPrepare.DOT
-                } else {
-                    if (cell == CellPrepare.SHIP_ALIVE) ships += 1 else empty += 1
-                    cell
+        uiState.value.shipsList.forEach { it ->
+            it.forEach { it2 ->
+                disableCellsAroundOneShip(it2.shipCells.toMutableList()).forEach { it3 ->
+                    listOfShipSurroundingsCells.add(it3)
                 }
             }
         }
 
-        _uiState.value = uiState.value.copy(battleFieldListEnum = updatedBattleField)
+        listOfShipSurroundingsCells = listOfShipSurroundingsCells.toSet().toMutableList()
 
-
-        println("after")
-        println("counter: ${counter}")
-
-        dots = 0
-        ships = 0
-        empty = 0
-
-        listDots = uiState.value.battleFieldListEnum
-
-        for (i in 0 until 10) {
-            for (j in listDots.indices) {
-                if (listDots[i][j] == CellPrepare.DOT) dots += 1
+        listOfAllShipsCells.forEach { shipCell ->
+            listOfShipSurroundingsCells.forEach { surroundCell ->
+                counter += 1
+                if (surroundCell == shipCell) {
+                    conflict += 1
+                }
             }
         }
-
-        println("dots: $dots")
-
-        listShipAlive = uiState.value.battleFieldListEnum
-
-        for (i in 0 until 10) {
-            for (j in listShipAlive.indices) {
-                if (listShipAlive[i][j] == CellPrepare.SHIP_ALIVE) ships += 1
-            }
-        }
-
-        println("ships: $ships")
-
-        listEmpty = uiState.value.battleFieldListEnum
-
-        for (i in 0 until 10) {
-            for (j in listEmpty.indices) {
-                if (listEmpty[i][j] == CellPrepare.EMPTY) empty += 1
-            }
-        }
-
-        println("empty: ${empty}")
-        println("conflict: ${conflict}")
-
 
         return conflict == 0
 
     }
 
-    private fun putDots() {
-        println("putDots")
-        _uiState.value =
-            uiState.value.copy(battleFieldListEnum = uiState.value.battleFieldList.map {
-                it.map { it2 ->
-                    if (it2.isShip) CellPrepare.SHIP_ALIVE else {
-                        if (it2.isEnabled) {
-                            CellPrepare.EMPTY
-                        } else CellPrepare.DOT
-                    }
+    private fun disableCellsAroundOneShip(
+        shipSet: MutableList<CellPosition>
+    ): MutableList<CellPosition> {
 
-                }
-            })
+        var listOfDisableCellsAroundOneShip = mutableListOf<CellPosition>()
+
+        for (i in shipSet.indices) {
+
+            //up
+            if (shipSet[i].row - 1 in 0 until 10) {
+                listOfDisableCellsAroundOneShip.add(
+                    CellPosition(
+                        shipSet[i].row - 1,
+                        shipSet[i].column
+                    )
+                )
+            }
+
+            //down
+            if (shipSet[i].row + 1 in 0 until 10) {
+                listOfDisableCellsAroundOneShip.add(
+                    CellPosition(
+                        shipSet[i].row + 1,
+                        shipSet[i].column
+                    )
+                )
+            }
+
+            //left
+            if (shipSet[i].column - 1 in 0 until 10) {
+                listOfDisableCellsAroundOneShip.add(
+                    CellPosition(
+                        shipSet[i].row,
+                        shipSet[i].column - 1
+                    )
+                )
+            }
+
+            //right
+            if (shipSet[i].column + 1 in 0 until 10) {
+                listOfDisableCellsAroundOneShip.add(
+                    CellPosition(
+                        shipSet[i].row,
+                        shipSet[i].column + 1
+                    )
+                )
+            }
+
+            //up-left
+            if (shipSet[i].row - 1 in 0 until 10 && shipSet[i].column - 1 in 0 until 10) {
+                listOfDisableCellsAroundOneShip.add(
+                    CellPosition(
+                        shipSet[i].row - 1,
+                        shipSet[i].column - 1
+                    )
+                )
+            }
+
+            //up-right
+            if (shipSet[i].row - 1 in 0 until 10 && shipSet[i].column + 1 in 0 until 10) {
+                listOfDisableCellsAroundOneShip.add(
+                    CellPosition(
+                        shipSet[i].row - 1,
+                        shipSet[i].column + 1
+                    )
+                )
+            }
+
+            //down-left
+            if (shipSet[i].row + 1 in 0 until 10 && shipSet[i].column - 1 in 0 until 10) {
+                listOfDisableCellsAroundOneShip.add(
+                    CellPosition(
+                        shipSet[i].row + 1,
+                        shipSet[i].column - 1
+                    )
+                )
+            }
+
+            //down-right
+            if (shipSet[i].row + 1 in 0 until 10 && shipSet[i].column + 1 in 0 until 10) {
+                listOfDisableCellsAroundOneShip.add(
+                    CellPosition(
+                        shipSet[i].row + 1,
+                        shipSet[i].column + 1
+                    )
+                )
+            }
+
+        }
+
+        listOfDisableCellsAroundOneShip = (listOfDisableCellsAroundOneShip.toSet()
+            .toMutableList() - shipSet.toMutableList()).toMutableList()
+
+
+        return listOfDisableCellsAroundOneShip
     }
 
-    private fun roll() {}
+    private fun roll() {
+
+        var shipSet: MutableList<CellPosition> = mutableListOf()
+
+        uiState.value.shipsList.forEach {
+            it.forEach { it2 ->
+                if (it2.isSelected) {
+                    shipSet = it2.shipCells.toMutableList()
+                }
+            }
+        }
+
+        shipSet.map {
+            val column = it.row
+            it.row = it.column
+            it.column = column
+            it
+        }
+
+        println(shipSet)
+
+        uiState.value.shipsList.map {
+            it.map { it2 ->
+                if (it2.isSelected) {
+                    it2.shipCells = shipSet
+                }
+            }
+        }
+
+        make_battleFieldList_from_shipList()
+        make_battleFieldListEnum_from_battleFieldList()
+        colorSelectedShip()
+
+        _uiState.value = uiState.value.copy(isCanGoBattle = readyToBattle())
+
+    }
 
     private fun battle() {
         ready.invoke(
             cells = uiState.value.battleFieldListEnum.map { row ->
                 row.map {
-                    when(it){
+                    when (it) {
                         CellPrepare.SHIP_ALIVE, CellPrepare.SHIP_SELECTED -> Cell.SHIP_ALIVE
                         else -> Cell.EMPTY
                     }
                 }
-            },
-            isOwner = isOwner,
-            code = code
+            }, isOwner = isOwner, code = code
         )
     }
+
     private fun clickOnCell(row: Int, column: Int) {
 
+        var oldShip: MutableList<CellPosition> = mutableListOf()
+
+
+        uiState.value.shipsList.forEach {
+            it.forEach { it2 ->
+                if (it2.isSelected) {
+                    oldShip = it2.shipCells.toMutableList()
+                }
+            }
+        }
+
         var shipPairIndexes: Pair<Int, Int> = Pair(-1, -1)
+
+        if (!oldShip.contains(CellPosition(row, column)) && oldShip.isNotEmpty()) {
+            outerLoop@ for (i in uiState.value.shipsList.indices) {
+                for (j in uiState.value.shipsList[i].indices) {
+                    for (k in uiState.value.shipsList[i][j].shipCells.indices) {
+                        if (uiState.value.shipsList[i][j].shipCells[k] == CellPosition(
+                                oldShip[0].row,
+                                oldShip[0].column
+                            )
+                        ) {
+                            shipPairIndexes = Pair(i, j)
+                            break@outerLoop
+                        }
+                    }
+                }
+            }
+
+            _uiState.value = uiState.value.copy(
+                shipsList = uiState.value.shipsList.mapIndexed() { index, shipsDataClasses ->
+                    shipsDataClasses.mapIndexed { index2, shipsDataClass2 ->
+                        if (shipPairIndexes == Pair(index, index2)) {
+                            shipsDataClass2.isSelected = false
+                            shipsDataClass2
+                        } else {
+                            shipsDataClass2
+                        }
+                    }
+                }
+            )
+
+            make_battleFieldList_from_shipList()
+            make_battleFieldListEnum_from_battleFieldList()
+        }
 
         outerLoop@ for (i in uiState.value.shipsList.indices) {
             for (j in uiState.value.shipsList[i].indices) {
@@ -690,27 +796,21 @@ class PrepareViewModel @Inject constructor(
 
         val updatedBattleFieldEnum = uiState.value.battleFieldListEnum.mapIndexed { rowIndex, row ->
             row.mapIndexed { columnIndex, cell ->
-
-                if (cell == CellPrepare.SHIP_SELECTED){
-                    CellPrepare.SHIP_ALIVE
-                }else{
-                    if (CellPosition(
-                            rowIndex, columnIndex
-                        ) in uiState.value.shipsList[shipPairIndexes.first][shipPairIndexes.second].shipCells
-                    ) {
-                        CellPrepare.SHIP_SELECTED
-                    }
-                    else{
-                        cell
-                    }
+                if (CellPosition(
+                        rowIndex, columnIndex
+                    ) in uiState.value.shipsList[shipPairIndexes.first][shipPairIndexes.second].shipCells
+                ) {
+                    CellPrepare.SHIP_SELECTED
+                } else {
+                    cell
                 }
+
 
             }
         }
 
         _uiState.value = uiState.value.copy(
-            shipsList = updatedBattleFieldShipsList,
-            battleFieldListEnum = updatedBattleFieldEnum
+            shipsList = updatedBattleFieldShipsList, battleFieldListEnum = updatedBattleFieldEnum
         )
 
     }
@@ -724,8 +824,8 @@ data class PrepareUiState(
     val battleFieldList: List<List<CellStatePrepare>> = listOf(),
     val shipsList: List<List<ShipsDataClass>> = listOf(),
     val isCanGoBattle: Boolean = false,
-    val code : String = "",
-    val isOwner : Boolean = true
+    val code: String = "",
+    val isOwner: Boolean = true
 )
 
 

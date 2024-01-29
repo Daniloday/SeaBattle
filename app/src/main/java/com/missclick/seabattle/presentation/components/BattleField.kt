@@ -246,7 +246,8 @@ fun Battlefield(
 fun BattlefieldNew(
     listBattlefield: List<List<CellPrepare>>,
     modifier: Modifier,
-    obtainEvent: (PrepareEvent) -> Unit
+    obtainEvent: (PrepareEvent) -> Unit,
+    canGoBattle: Boolean
 ) {
 
     Column(
@@ -298,7 +299,8 @@ fun BattlefieldNew(
                                 CellPrepare.EMPTY -> {
                                     EmptyCellBattlefield(
                                         modifier = Modifier
-                                            .weight(1f))
+                                            .weight(1f)
+                                    )
                                 }
 
                                 CellPrepare.DOT -> {
@@ -310,13 +312,14 @@ fun BattlefieldNew(
                                         modifier = Modifier
                                             .weight(1f)
                                             .clickable {
-
-                                                obtainEvent(
-                                                    PrepareEvent.ClickOnCell(
-                                                        rowNumber,
-                                                        columnNumber
+                                                if (canGoBattle) {
+                                                    obtainEvent(
+                                                        PrepareEvent.ClickOnCell(
+                                                            rowNumber,
+                                                            columnNumber
+                                                        )
                                                     )
-                                                )
+                                                }
                                             })
                                 }
 

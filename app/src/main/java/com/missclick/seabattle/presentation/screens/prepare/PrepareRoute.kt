@@ -22,6 +22,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.draw.scale
@@ -81,7 +82,7 @@ fun PrepareScreen(
                 ) {
                     BattlefieldNew(
                         listBattlefield = uiState.battleFieldListEnum, modifier = Modifier
-                            .size(battleFieldSize.dp), obtainEvent
+                            .size(battleFieldSize.dp), obtainEvent, uiState.isCanGoBattle
                     )
                     Row(
                         Modifier
@@ -204,7 +205,7 @@ fun PrepareScreen(
                                 modifier = Modifier
                                     .weight(4f)
                                     .width(battleFieldSize.dp / 3)
-//                                    .alpha(0.3f)
+                                    .alpha(if (uiState.isCanGoBattle) 1f else 0.3f)
                                 ,
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                 border = BorderStroke(1.dp, AppTheme.colors.primary),

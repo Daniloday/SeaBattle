@@ -7,10 +7,13 @@ import com.missclick.seabattle.common.BaseViewModel
 import com.missclick.seabattle.common.EventHandler
 import com.missclick.seabattle.common.Resource
 import com.missclick.seabattle.domain.model.Cell
+import com.missclick.seabattle.domain.use_cases.ConnectToRoomUseCase
+import com.missclick.seabattle.domain.use_cases.DeleteRoomUseCase
 import com.missclick.seabattle.domain.use_cases.ObserveRoomUseCase
 import com.missclick.seabattle.domain.use_cases.DoStepUseCase
 import com.missclick.seabattle.presentation.navigation.NavigationKeys
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -24,11 +27,15 @@ import javax.inject.Inject
 class BattleViewModel @Inject constructor(
     observeRoom: ObserveRoomUseCase,
     private val doStepUseCase: DoStepUseCase,
-    private val savedStateHandle: SavedStateHandle
+    private val connectToRoomUseCase: ConnectToRoomUseCase,
+    private val savedStateHandle: SavedStateHandle,
+    private val deleteRoomUseCase: DeleteRoomUseCase
 ) : BaseViewModel<BattleUiState, BattleEvent>(BattleUiState.Loading) {
 
-    private val isOwner : Boolean = savedStateHandle.get<String>(NavigationKeys.IS_OWNER).toString().toBoolean()
-    private val code : String = savedStateHandle[NavigationKeys.CODE]!!
+    val isOwner : Boolean = savedStateHandle.get<String>(NavigationKeys.IS_OWNER).toString().toBoolean()
+    val code : String = savedStateHandle.get<String>(NavigationKeys.CODE).toString()
+
+
 
     init {
         viewModelScope.launch {
@@ -46,11 +53,14 @@ class BattleViewModel @Inject constructor(
                     }
 
                     is Resource.Success -> {
-                        if (it.data.friendIsReady && it.data.youAreReady){
+                        if ((it.data.friendIsReady && it.data.youAreReady) || it.data.friendIsConnected || it.data.youAreConnected){
                             BattleUiState.Success(
                                 yourCells = it.data.yourCells,
                                 friendCells = it.data.friendCells,
-                                yourMove = it.data.yourMove
+                                yourMove = it.data.yourMove,
+                                youAreWinner = it.data.youAreWinner,
+                                friendsIsConnected = it.data.friendIsConnected,
+                                youAreConnected = it.data.youAreConnected
                             )
                         }else{
                             BattleUiState.Loading
@@ -67,6 +77,23 @@ class BattleViewModel @Inject constructor(
             is BattleEvent.DoStep -> {
                 doStep(y = event.y, x = event.x)
             }
+            is BattleEvent.Restart -> {
+                restart()
+            }
+            is BattleEvent.Exit -> {
+                exit()
+            }
+        }
+    }
+
+    private fun exit(){
+        deleteRoomUseCase(code)
+    }
+
+    private fun restart(){
+        println("restart")
+        viewModelScope.launch {
+            connectToRoomUseCase(code = code, isOwner = isOwner).collect()
         }
     }
 
@@ -98,12 +125,19 @@ sealed class BattleUiState {
         val yourCells: List<List<Cell>>,
         val friendCells: List<List<Cell>>,
         val yourMove: Boolean = true,
+        val youAreWinner : Boolean? = null,
+        val friendsIsConnected : Boolean = false,
+        val youAreConnected : Boolean = false
     ) : BattleUiState()
+
 
 }
 
 sealed class BattleEvent {
     class DoStep(val y: Int, val x: Int) : BattleEvent()
+    data object Restart : BattleEvent()
+
+    data object Exit : BattleEvent()
 }
 
 

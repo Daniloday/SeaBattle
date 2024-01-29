@@ -14,6 +14,7 @@ data class GameDto(
     val ownerCells : List<CellDto> = generateEmptyField(),
     val friendCells : List<CellDto> = generateEmptyField(),
     val friendIsConnected : Boolean = false,
+    val ownerIsConnected : Boolean = false,
     val ownerIsReady : Boolean = false,
     val friendIsReady : Boolean = false,
     val moveOwner : Boolean = true
@@ -32,10 +33,16 @@ fun GameDto.toGame(isOwner : Boolean) : Game{
     return Game(
         yourCells = if (isOwner) ownerCells.dtoCellsToGame() else friendCells.dtoCellsToGame(),
         friendCells = if (!isOwner) ownerCells.dtoCellsToGame() else friendCells.dtoCellsToGame(),
-        friendIsConnected = if (isOwner) friendIsConnected else true,
+        friendIsConnected = if (isOwner) friendIsConnected else ownerIsConnected,
+        youAreConnected = if (isOwner) ownerIsConnected else friendIsConnected,
         friendIsReady = if (isOwner) friendIsReady else ownerIsReady,
         youAreReady = if (isOwner) ownerIsReady else friendIsReady,
         yourMove = if (isOwner) moveOwner else !moveOwner,
+        youAreWinner = when{
+            ownerCells.count { it.ship && it.dot } == 20 -> !isOwner
+            friendCells.count { it.ship && it.dot } == 20 -> isOwner
+            else -> null
+        }
     )
 }
 
@@ -43,7 +50,8 @@ fun Game.toDto(isOwner : Boolean) : GameDto{
     return GameDto(
         ownerCells = if (isOwner) yourCells.cellsToDto() else friendCells.cellsToDto(),
         friendCells = if (!isOwner) yourCells.cellsToDto() else friendCells.cellsToDto(),
-        friendIsConnected = if (isOwner) friendIsConnected else true,
+        friendIsConnected = if (isOwner) friendIsConnected else youAreConnected,
+        ownerIsConnected = if (isOwner) youAreConnected else friendIsConnected,
         ownerIsReady = if (isOwner) youAreReady else friendIsReady,
         friendIsReady = if (isOwner) friendIsReady else youAreReady,
         moveOwner = if (isOwner) yourMove else !yourMove

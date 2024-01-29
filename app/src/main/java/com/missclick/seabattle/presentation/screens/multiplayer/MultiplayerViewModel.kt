@@ -33,7 +33,7 @@ class MultiplayerViewModel @Inject constructor(
     private fun connect(){
         if (uiState.value.code.length == 5){
             viewModelScope.launch {
-                connectToRoom(code = uiState.value.code).collect{
+                connectToRoom(code = uiState.value.code, isOwner = false).collect{
                     _uiState.value = uiState.value.copy(
                         connectionStatus = when(it){
                             is Resource.Loading -> ConnectionStatus.Loading

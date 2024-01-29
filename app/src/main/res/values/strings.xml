@@ -9,4 +9,9 @@
     <string name="create_room">create room</string>
     <string name="connecting">Connecting...</string>
     <string name="shareCode">Share this code with your friend</string>
+    <string name="youWon">You Won!</string>
+    <string name="youLost">You Lost!</string>
+    <string name="menu">Menu</string>
+    <string name="restart">Restart</string>
+    <string name="waiting">Waiting...</string>
 </resources>

@@ -210,9 +210,11 @@ fun PrepareScreen(
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                 border = BorderStroke(1.dp, AppTheme.colors.primary),
                                 onClick = {
-                                    obtainEvent(PrepareEvent.Battle)
-                                    println("click card")
-                                    navigateTo(NavigationTree.Battle.route + "/" + uiState.code + "/" + uiState.isOwner.toString())
+                                    if (uiState.isCanGoBattle){
+                                        obtainEvent(PrepareEvent.Battle)
+                                        println("click card")
+                                        navigateTo(NavigationTree.Battle.route + "/" + uiState.code + "/" + uiState.isOwner.toString())
+                                    }
                                 }
                             ) {
                                 Box(Modifier.fillMaxSize()) {
@@ -366,9 +368,11 @@ fun PrepareScreen(
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                 border = BorderStroke(1.dp, AppTheme.colors.primary),
                                 onClick = {
-                                    obtainEvent(PrepareEvent.Battle)
-                                    println("click card")
-                                    navigateTo(NavigationTree.Battle.route + "/" + uiState.code + "/" + uiState.isOwner.toString())
+                                    if (uiState.isCanGoBattle){
+                                        obtainEvent(PrepareEvent.Battle)
+                                        println("click card")
+                                        navigateTo(NavigationTree.Battle.route + "/" + uiState.code + "/" + uiState.isOwner.toString())
+                                    }
                                 }
                             ) {
                                 Box(Modifier.fillMaxSize()) {

@@ -65,7 +65,14 @@ class PrepareViewModel @Inject constructor(
         random()
     }
 
-    private fun upArrow() {}
+    private fun upArrow() {
+        val ship: CellPosition
+
+//        uiState.value.shipsList.forEach {
+//
+//        }
+
+    }
     private fun downArrow() {}
     private fun leftArrow() {}
     private fun rightArrow() {}

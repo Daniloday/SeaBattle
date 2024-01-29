@@ -11,7 +11,10 @@ import java.io.Serializable
 import javax.inject.Inject
 
 @kotlinx.serialization.Serializable
-data class Settings(val vibration: Boolean = true) : Serializable
+data class Settings(
+    val vibration: Boolean = true,
+    val volume : Boolean = true,
+) : Serializable
 
 class SettingsSerializer @Inject constructor() : Serializer<Settings> {
 

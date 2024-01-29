@@ -7,11 +7,11 @@ import kotlinx.coroutines.flow.onStart
 
 sealed class Resource<out T>() {
     data class Success<T>(val data: T) : Resource<T>()
-    data class Error<T>(val exception: String) : Resource<T>()
-    class Loading<T>() : Resource<T>()
+    data class Error(val exception: String) : Resource<Nothing>()
+    data object Loading : Resource<Nothing>()
 }
 
 fun <T> Flow<T>.asResult(): Flow<Resource<T>> = map<T, Resource<T>> { Resource.Success(it) }
-    .onStart { emit(Resource.Loading<T>()) }
+    .onStart { emit(Resource.Loading) }
     .catch { emit(Resource.Error(it.message.toString())) }
 

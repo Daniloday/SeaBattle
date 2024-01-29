@@ -72,7 +72,7 @@ fun BattleScreen(uiState: BattleUiState, obtainEvent: (BattleEvent) -> Unit, nav
         }
 
         is BattleUiState.Error -> {
-            Text(text = "Error", style = AppTheme.typography.h4, color = AppTheme.colors.error)
+            Text(text = "Error ${uiState.errorName}", style = AppTheme.typography.h3, color = AppTheme.colors.error)
         }
         is BattleUiState.Success -> {
             if (uiState.youAreConnected && uiState.friendsIsConnected){

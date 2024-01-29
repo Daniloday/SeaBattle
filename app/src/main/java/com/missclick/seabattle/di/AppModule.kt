@@ -5,9 +5,12 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.missclick.seabattle.data.RepositoryImpl
+import com.missclick.seabattle.data.SettingsRepositoryImpl
 import com.missclick.seabattle.data.remote.FireStore
 import com.missclick.seabattle.domain.Repository
+import com.missclick.seabattle.domain.SettingsRepository
 import com.missclick.seabattle.domain.model.Settings
+import com.missclick.seabattle.domain.model.SettingsSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,23 +33,22 @@ object AppModule {
         return RepositoryImpl(fireStore)
     }
 
-//    @Provides
-//    @Singleton
-//    internal fun provideSettingsDataStore(
-//        @ApplicationContext context: Context,
-//        ioDispatcher: CoroutineDispatcher,
-//        scope: CoroutineScope,
-//        userPreferencesSerializer: UserPreferencesSerializer,
-//    ): DataStore<Settings> =
-//        DataStoreFactory.create(
-//            serializer = userPreferencesSerializer,
-//            scope = CoroutineScope(scope.coroutineContext + ioDispatcher),
-//            migrations = listOf(
-//                IntToStringIdsMigration,
-//            ),
-//        ) {
-//            context.dataStoreFile("user_preferences.pb")
-//        }
+    @Provides
+    @Singleton
+    fun provideDataStore(
+        @ApplicationContext context: Context,
+        settingsSerializer: SettingsSerializer
+    ): DataStore<Settings> =
+        DataStoreFactory.create(serializer = settingsSerializer, produceFile = {
+            context.dataStoreFile("user_preferences.pb")
+        })
+
+
+    @Provides
+    @Singleton
+    fun provideSettingsRepository(dataStore: DataStore<Settings>) : SettingsRepository{
+        return SettingsRepositoryImpl(dataStore)
+    }
 
 
 

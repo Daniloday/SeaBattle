@@ -11,15 +11,13 @@ import com.missclick.seabattle.R
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
 
 @Composable
-fun Connecting(){
+fun Connecting(modifier: Modifier = Modifier) {
 
-    Box(Modifier.fillMaxSize()) {
-        Text(
-            text = stringResource(id = R.string.connecting),
-            color = AppTheme.colors.secondary,
-            style = AppTheme.typography.h1,
-            modifier = Modifier.align(Alignment.Center)
-        )
-    }
+    Text(
+        text = stringResource(id = R.string.waiting),
+        color = AppTheme.colors.secondary,
+        style = AppTheme.typography.h1,
+        modifier = modifier
+    )
 
 }

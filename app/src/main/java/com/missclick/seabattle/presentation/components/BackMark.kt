@@ -15,7 +15,7 @@ import com.missclick.seabattle.R
 @Composable
 fun BackMark(backCallBack : ()->Unit){
     Box(modifier = Modifier.padding(top = 24.dp,start = 16.dp)){
-        Image(painter = painterResource(id = R.drawable.back_mark), modifier = Modifier.size(24.dp).clickable(indication = null, interactionSource = MutableInteractionSource()) {
+        Image(painter = painterResource(id = R.drawable.back_mark), modifier = Modifier.size(24.dp).click {
             backCallBack()
         }, contentDescription = null)
     }

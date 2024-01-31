@@ -2,10 +2,10 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="MenuScreenPreview">
+      <entry key="app">
         <State />
       </entry>
-      <entry key="app">
+      <entry key="t">
         <State />
       </entry>
     </value>

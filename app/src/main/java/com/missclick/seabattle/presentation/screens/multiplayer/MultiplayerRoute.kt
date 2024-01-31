@@ -20,6 +20,7 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,6 +28,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.key.Key
@@ -34,6 +36,7 @@ import androidx.compose.ui.input.key.KeyEvent
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.modifier.modifierLocalMapOf
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -42,6 +45,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.missclick.seabattle.R
 import com.missclick.seabattle.presentation.components.BackMark
+import com.missclick.seabattle.presentation.components.click
 import com.missclick.seabattle.presentation.navigation.NavigationTree
 import com.missclick.seabattle.presentation.screens.menu.MenuEvent
 
@@ -49,13 +53,16 @@ import com.missclick.seabattle.presentation.screens.menu.MenuUiState
 import com.missclick.seabattle.presentation.screens.menu.MenuViewModel
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun MultiplayerRoute(navController: NavController, vm: MultiplayerViewModel = hiltViewModel()) {
 
     val uiState by vm.uiState.collectAsState()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     if (uiState.connectionStatus is ConnectionStatus.Success) {
         LaunchedEffect(key1 = Unit, block = {
+            keyboardController?.hide()
             navController.navigate(NavigationTree.Prepare.route + "/" + uiState.code + "/" + "false")
         })
     }
@@ -63,16 +70,21 @@ fun MultiplayerRoute(navController: NavController, vm: MultiplayerViewModel = hi
     MultiplayerScreen(
         uiState = uiState,
         obtainEvent = vm::obtainEvent,
-        navigateTo = { navController.navigate(it.route) }
+        navigateTo = { navController.navigate(it.route) },
+        navigateBack = {navController.popBackStack()}
     )
 
+
+
 }
+
 
 @Composable
 fun MultiplayerScreen(
     uiState: MultiplayerUiState,
     obtainEvent: (MultiplayerEvent) -> Unit,
-    navigateTo: (NavigationTree) -> Unit
+    navigateTo: (NavigationTree) -> Unit,
+    navigateBack: () -> Unit,
 ) {
 
     val pattern = remember { Regex("^\\d+\$") }
@@ -146,7 +158,7 @@ fun MultiplayerScreen(
                             .padding(start = 24.dp)
                             .size(36.dp)
                             .align(Alignment.CenterVertically)
-                            .clickable {
+                            .click {
                                 obtainEvent(MultiplayerEvent.Connect)
                             },
                         contentDescription = null,
@@ -156,14 +168,12 @@ fun MultiplayerScreen(
             }
 
             Text(
-                text = stringResource(id = R.string.or), modifier = Modifier.clickable {
-
-                },
+                text = stringResource(id = R.string.or), modifier = Modifier,
                 style = AppTheme.typography.h2,
                 color = AppTheme.colors.secondary
             )
             Text(
-                text = stringResource(id = R.string.create_room), modifier = Modifier.clickable {
+                text = stringResource(id = R.string.create_room), modifier = Modifier.click {
                     navigateTo(NavigationTree.Waiting)
                 },
                 style = AppTheme.typography.h2,
@@ -171,7 +181,7 @@ fun MultiplayerScreen(
             )
         }
         BackMark() {
-            navigateTo(NavigationTree.Menu)
+            navigateBack()
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.missclick.seabattle.presentation.screens.battle
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -36,6 +37,8 @@ import com.missclick.seabattle.domain.model.Cell
 import com.missclick.seabattle.presentation.components.BackMark
 import com.missclick.seabattle.presentation.components.Battlefield
 import com.missclick.seabattle.presentation.components.Connecting
+import com.missclick.seabattle.presentation.components.ExitDialog
+import com.missclick.seabattle.presentation.components.click
 import com.missclick.seabattle.presentation.navigation.NavigationTree
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
 
@@ -46,47 +49,95 @@ fun BattleRoute(
 ) {
 
 
-
-
-
     val uiState by battleViewModel.uiState.collectAsState()
+    val uiStateDialog by battleViewModel.uiStateExitDialog.collectAsState()
 
-    BattleScreen(uiState = uiState, obtainEvent = battleViewModel::obtainEvent,
-        navigateTo = { navController.navigate(it)},
-        code = battleViewModel.code,
-        isOwner = battleViewModel.isOwner
+    BattleScreen(
+        uiState = uiState,
+        obtainEvent = battleViewModel::obtainEvent,
+        navigateToPrepare = {
+            navController.popBackStack(NavigationTree.Prepare.route, false)
+        },
+        navigateToMenu = {
+            navController.popBackStack(NavigationTree.Menu.route, false)
+        },
+        uiStateDialog = uiStateDialog
     )
 
 
+
+    BackHandler {
+        battleViewModel.obtainEvent(BattleEvent.Back)
+    }
+
+
 }
 
 @Composable
-fun BattleScreen(uiState: BattleUiState, obtainEvent: (BattleEvent) -> Unit, navigateTo : (String) -> Unit,
-                 code : String, isOwner : Boolean) {
+fun BattleScreen(
+    modifier: Modifier = Modifier,
+    uiState: BattleUiState,
+    obtainEvent: (BattleEvent) -> Unit,
+    navigateToPrepare: () -> Unit,
+    navigateToMenu: () -> Unit,
+    uiStateDialog : Boolean
+) {
 
-
-
-    when (uiState) {
-        is BattleUiState.Loading -> {
-            Connecting()
-        }
-
-        is BattleUiState.Error -> {
-            Text(text = "Error ${uiState.errorName}", style = AppTheme.typography.h3, color = AppTheme.colors.error)
-        }
-        is BattleUiState.Success -> {
-            if (uiState.youAreConnected && uiState.friendsIsConnected){
-                navigateTo(NavigationTree.Prepare.route + "/" + code + "/" + isOwner.toString())
+    Box(Modifier.fillMaxSize()) {
+        when (uiState) {
+            is BattleUiState.Loading -> {
+                Connecting(modifier = modifier.align(Alignment.Center))
             }
 
-            BattleSuccess(uiState = uiState, obtainEvent = obtainEvent, navigateTo = navigateTo, code = code, isOwner = isOwner )
+            is BattleUiState.Error -> {
+                Text(
+                    text = "Error ${uiState.errorName}",
+                    style = AppTheme.typography.h3,
+                    color = AppTheme.colors.error
+                )
+            }
+
+            is BattleUiState.Success -> {
+                if (uiState.youAreConnected && uiState.friendsIsConnected) {
+                    navigateToPrepare()
+                }
+
+                BattleSuccess(
+                    uiState = uiState,
+                    obtainEvent = obtainEvent,
+                    navigateToMenu = navigateToMenu,
+                )
+            }
+        }
+
+        BackMark {
+            obtainEvent(BattleEvent.Back)
+        }
+
+        if (uiStateDialog){
+            ExitDialog(
+                no = {
+                    obtainEvent(BattleEvent.CloseDialog)
+                },
+                yes = {
+                    obtainEvent(BattleEvent.Exit)
+                    navigateToMenu()
+                }
+            )
         }
     }
 
+
+
+
 }
 
 @Composable
-fun BattleSuccess(uiState: BattleUiState.Success, obtainEvent: (BattleEvent) -> Unit, navigateTo : (String) -> Unit, code : String, isOwner : Boolean) {
+fun BattleSuccess(
+    uiState: BattleUiState.Success,
+    obtainEvent: (BattleEvent) -> Unit,
+    navigateToMenu: () -> Unit,
+) {
     Box(modifier = Modifier.fillMaxSize()) {
 
         val orientation = LocalConfiguration.current.orientation
@@ -98,7 +149,7 @@ fun BattleSuccess(uiState: BattleUiState.Success, obtainEvent: (BattleEvent) -> 
 
         when (orientation) {
             Configuration.ORIENTATION_PORTRAIT -> {
-                //portrait
+
                 Column(
                     Modifier.fillMaxSize(),
                     verticalArrangement = Arrangement.SpaceAround,
@@ -119,16 +170,15 @@ fun BattleSuccess(uiState: BattleUiState.Success, obtainEvent: (BattleEvent) -> 
                     )
                     Battlefield(
                         listBattlefield = uiState.friendCells
-                        .map {row ->
-                                                                  row.map {
-                                                                      if (it == Cell.SHIP_ALIVE){
-                                                                          Cell.EMPTY
-                                                                      }else{
-                                                                          it
-                                                                      }
-                                                                  }
-                        }
-                , modifier = Modifier
+                            .map { row ->
+                                row.map {
+                                    if (it == Cell.SHIP_ALIVE) {
+                                        Cell.EMPTY
+                                    } else {
+                                        it
+                                    }
+                                }
+                            }, modifier = Modifier
                             .size(battleFieldSize.dp),
                         onClick = if (uiState.yourMove) { y, x ->
                             obtainEvent(BattleEvent.DoStep(y = y, x = x))
@@ -138,14 +188,23 @@ fun BattleSuccess(uiState: BattleUiState.Success, obtainEvent: (BattleEvent) -> 
             }
 
             Configuration.ORIENTATION_LANDSCAPE -> {
-                //landscape
+
                 Row(
                     Modifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Battlefield(
-                        listBattlefield = uiState.yourCells, modifier = Modifier
+                        listBattlefield = uiState.friendCells
+                            .map { row ->
+                                row.map {
+                                    if (it == Cell.SHIP_ALIVE) {
+                                        Cell.EMPTY
+                                    } else {
+                                        it
+                                    }
+                                }
+                            }, modifier = Modifier
                             .size(battleFieldSize.dp)
                     )
                     Image(
@@ -171,42 +230,57 @@ fun BattleSuccess(uiState: BattleUiState.Success, obtainEvent: (BattleEvent) -> 
             else -> {}
         }
 
-        if (uiState.youAreWinner != null){
-            WinDialog(uiState = uiState, navigateTo = navigateTo, code = code, isOwner = isOwner, obtainEvent = obtainEvent)
+        if (uiState.youAreWinner != null) {
+            WinDialog(
+                uiState = uiState,
+                navigateToMenu = navigateToMenu,
+                obtainEvent = obtainEvent
+            )
         }
 
 
-        BackMark {
 
-        }
+
     }
 }
 
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
-fun WinDialog(uiState: BattleUiState.Success, navigateTo : (String) -> Unit, code : String, isOwner : Boolean, obtainEvent: (BattleEvent) -> Unit,){
+fun WinDialog(
+    uiState: BattleUiState.Success,
+    navigateToMenu: () -> Unit,
+    obtainEvent: (BattleEvent) -> Unit,
+) {
 
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .background(Color(0xA6222222))) {
-        
-        Box(modifier = Modifier
-            .fillMaxWidth(0.7f)
-            .fillMaxHeight(0.4f)
-            .align(Alignment.Center)
-            .clip(RoundedCornerShape(10.dp))
-            .background(AppTheme.colors.secondaryBackground)
-            ){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color(0xA6222222))
+    ) {
 
-            Column(modifier = Modifier.align(Alignment.Center), horizontalAlignment = Alignment.CenterHorizontally) {
-                if (uiState.youAreWinner == true){
-                    Text(text = stringResource(id = R.string.youWon),
+        Box(
+            modifier = Modifier
+                .fillMaxWidth(0.7f)
+                .fillMaxHeight(0.4f)
+                .align(Alignment.Center)
+                .clip(RoundedCornerShape(10.dp))
+                .background(AppTheme.colors.secondaryBackground)
+        ) {
+
+            Column(
+                modifier = Modifier.align(Alignment.Center),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                if (uiState.youAreWinner == true) {
+                    Text(
+                        text = stringResource(id = R.string.youWon),
                         style = AppTheme.typography.h2,
                         color = AppTheme.colors.success
                     )
-                }else{
-                    Text(text = stringResource(id = R.string.youLost),
+                } else {
+                    Text(
+                        text = stringResource(id = R.string.youLost),
                         style = AppTheme.typography.h2,
                         color = AppTheme.colors.error
                     )
@@ -215,16 +289,17 @@ fun WinDialog(uiState: BattleUiState.Success, navigateTo : (String) -> Unit, cod
                 Spacer(modifier = Modifier.height(24.dp))
 
 
-                if (uiState.youAreConnected){
-                    Text(text = stringResource(id = R.string.waiting),
+                if (uiState.youAreConnected) {
+                    Text(
+                        text = stringResource(id = R.string.waiting),
                         style = AppTheme.typography.h1,
                         color = AppTheme.colors.secondary,
                     )
-                }else{
+                } else {
                     Text(text = stringResource(id = R.string.restart),
                         style = AppTheme.typography.h1,
                         color = AppTheme.colors.primary,
-                        modifier = Modifier.clickable {
+                        modifier = Modifier.click {
                             obtainEvent(BattleEvent.Restart)
                         }
                     )
@@ -236,18 +311,18 @@ fun WinDialog(uiState: BattleUiState.Success, navigateTo : (String) -> Unit, cod
                 Text(text = stringResource(id = R.string.menu),
                     style = AppTheme.typography.h1,
                     color = AppTheme.colors.primary,
-                    modifier = Modifier.clickable {
+                    modifier = Modifier.click {
                         obtainEvent(BattleEvent.Exit)
-                        navigateTo(NavigationTree.Menu.route)
+                        navigateToMenu()
                     }
                 )
 
 
             }
 
-            
+
         }
-        
+
     }
 
 

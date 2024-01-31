@@ -23,6 +23,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import com.missclick.seabattle.R
+import com.missclick.seabattle.presentation.components.click
 import com.missclick.seabattle.presentation.navigation.NavigationTree
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
 import com.missclick.seabattle.presentation.ui.theme.SeaBattleTheme
@@ -55,20 +56,20 @@ fun MenuScreen(
 
         ) {
 
-        Text(text = stringResource(id = R.string.single_mode), modifier = Modifier.clickable {
+        Text(text = stringResource(id = R.string.single_mode), modifier = Modifier.click {
 
         },
             style = AppTheme.typography.h1,
             color = AppTheme.colors.primary
         )
 
-        Text(text = stringResource(id = R.string.multiplayer), modifier = Modifier.clickable {
+        Text(text = stringResource(id = R.string.multiplayer), modifier = Modifier.click {
             navigateTo(NavigationTree.Multiplayer.route)
         },
             style = AppTheme.typography.h1,
             color = AppTheme.colors.primary
         )
-        Text(text = stringResource(id = R.string.settings), modifier = Modifier.clickable {
+        Text(text = stringResource(id = R.string.settings), modifier = Modifier.click {
             navigateTo(NavigationTree.Battle.route + "/" + "87871" + "/" + "true")
         },
             style = AppTheme.typography.h1,

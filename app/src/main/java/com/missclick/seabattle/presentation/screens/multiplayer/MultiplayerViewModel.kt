@@ -1,5 +1,8 @@
 package com.missclick.seabattle.presentation.screens.multiplayer
 
+import android.content.Context
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.missclick.seabattle.common.BaseViewModel
@@ -8,6 +11,7 @@ import com.missclick.seabattle.domain.use_cases.ConnectToRoomUseCase
 import com.missclick.seabattle.domain.use_cases.ObserveRoomUseCase
 import com.missclick.seabattle.presentation.navigation.NavigationKeys
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -37,10 +41,20 @@ class MultiplayerViewModel @Inject constructor(
                     _uiState.value = uiState.value.copy(
                         connectionStatus = when(it){
                             is Resource.Loading -> ConnectionStatus.Loading
-                            is Resource.Error -> ConnectionStatus.Error
-                            is Resource.Success -> ConnectionStatus.Success
+                            is Resource.Error -> {
+                                ConnectionStatus.Error.also {
+                                    cancel()
+                                }
+                                
+                            }
+                            is Resource.Success -> {
+                                ConnectionStatus.Success.also {
+                                    cancel()
+                                }
+                            }
                         }
                     )
+
                 }
             }
         }else{

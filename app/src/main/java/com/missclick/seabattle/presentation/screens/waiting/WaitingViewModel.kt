@@ -1,35 +1,44 @@
 package com.missclick.seabattle.presentation.screens.waiting
 
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import androidx.lifecycle.viewModelScope
 import com.missclick.seabattle.common.BaseViewModel
 import com.missclick.seabattle.common.Resource
 import com.missclick.seabattle.domain.use_cases.CreateRoomUseCase
+import com.missclick.seabattle.domain.use_cases.DeleteRoomUseCase
 import com.missclick.seabattle.domain.use_cases.ObserveRoomUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.job
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+
 @HiltViewModel
 class WaitingViewModel @Inject constructor(
-    createRoom: CreateRoomUseCase,
-    observeRoom: ObserveRoomUseCase,
-    savedStateHandle: SavedStateHandle
+    private val createRoom: CreateRoomUseCase,
+    private val observeRoom: ObserveRoomUseCase,
+    private val deleteRoom: DeleteRoomUseCase
 ) : BaseViewModel<WaitingUiState, WaitingEvent>( WaitingUiState.Loading) {
 
 
-
+    private var code : String? = null
+    private val scope = viewModelScope
 
     init {
-        viewModelScope.launch {
+       connect()
+    }
+
+
+
+    private fun connect(){
+        scope.launch {
             createRoom().collect { codeResource ->
                 when (codeResource) {
                     is Resource.Loading -> {
@@ -38,11 +47,11 @@ class WaitingViewModel @Inject constructor(
 
                     is Resource.Error -> {
                         _uiState.value = WaitingUiState.Error(codeResource.exception)
+                        cancel()
                     }
 
                     is Resource.Success -> {
-//                savedStateHandle[NavigationKeys.IS_OWNER] = true
-//                savedStateHandle[NavigationKeys.CODE] = it.data.code
+                        code = codeResource.data
                         _uiState.value = WaitingUiState.Success(
                             friendIsConnected = false,
                             code = codeResource.data
@@ -55,6 +64,7 @@ class WaitingViewModel @Inject constructor(
 
                                 is Resource.Error -> {
                                     _uiState.value = WaitingUiState.Error(gameResource.exception)
+                                    cancel()
                                 }
                                 is Resource.Success -> {
                                     _uiState.value = WaitingUiState.Success(
@@ -73,6 +83,32 @@ class WaitingViewModel @Inject constructor(
     }
 
     override fun obtainEvent(event: WaitingEvent) {
+        when(event){
+            is WaitingEvent.Copy -> {
+                copy(event.context)
+            }
+            is WaitingEvent.Exit -> {
+                exit()
+            }
+            is WaitingEvent.Reconnect -> {
+                connect()
+            }
+        }
+    }
+
+
+    private fun exit(){
+        scope.cancel()
+        code?.let { deleteRoom(it) }
+    }
+
+    private fun copy(context: Context) {
+        val state = uiState.value
+        if (state is WaitingUiState.Success){
+            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+            val clip = ClipData.newPlainText("label", state.code)
+            clipboard.setPrimaryClip(clip)
+        }
 
     }
 
@@ -92,6 +128,9 @@ sealed class WaitingUiState() {
 }
 
 sealed class WaitingEvent(){
+    data class Copy(val context: Context) : WaitingEvent()
+    data object Exit : WaitingEvent()
+    data object Reconnect : WaitingEvent()
 
 }
 

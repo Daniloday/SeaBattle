@@ -4,6 +4,7 @@ import androidx.lifecycle.SavedStateHandle
 import com.missclick.seabattle.common.BaseViewModel
 import com.missclick.seabattle.domain.model.Cell
 import com.missclick.seabattle.domain.model.CellPrepare
+import com.missclick.seabattle.domain.use_cases.DeleteRoomUseCase
 import com.missclick.seabattle.domain.use_cases.ReadyUseCase
 import com.missclick.seabattle.presentation.navigation.NavigationKeys
 import com.missclick.seabattle.presentation.screens.prepare.models.CellPosition
@@ -14,7 +15,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class PrepareViewModel @Inject constructor(
-    private val ready: ReadyUseCase, savedStateHandle: SavedStateHandle
+    private val ready: ReadyUseCase, savedStateHandle: SavedStateHandle,
+    private val deleteRoomUseCase: DeleteRoomUseCase
 ) : BaseViewModel<PrepareUiState, PrepareEvent>(PrepareUiState()) {
 
     private val isOwner: Boolean =
@@ -53,6 +55,23 @@ class PrepareViewModel @Inject constructor(
             is PrepareEvent.ClickOnCell -> {
                 clickOnCell(event.row, event.column)
             }
+
+            is PrepareEvent.Exit -> {
+                deleteRoomUseCase(uiState.value.code)
+            }
+
+            is PrepareEvent.CloseDialog -> {
+                _uiState.value = uiState.value.copy(
+                    dialogAlertIsOpen = false
+                )
+            }
+
+            is PrepareEvent.Back -> {
+                _uiState.value = uiState.value.copy(
+                    dialogAlertIsOpen = true
+                )
+            }
+
         }
     }
 
@@ -857,7 +876,8 @@ data class PrepareUiState(
     val shipsList: List<List<ShipsDataClass>> = listOf(),
     val isCanGoBattle: Boolean = false,
     val code: String = "",
-    val isOwner: Boolean = true
+    val isOwner: Boolean = true,
+    val dialogAlertIsOpen : Boolean = false
 )
 
 
@@ -869,21 +889,6 @@ sealed class ConnectionStatus() {
 }
 
 
-//sealed class PrepareUiState2() {
-//    data class field : List<Cell>,
-//
-//    data object Loading : PrepareUiState2()
-//    data class Error(val errorName: String) : PrepareUiState2()
-//
-//    data class Success(
-//        val friendIsConnected: Boolean,
-//        val code: String,
-//        val battleFieldList: List<List<Cell>>
-//    ) : PrepareUiState2()
-//
-//
-//
-//}
 
 sealed class PrepareEvent {
     data object UpArrow : PrepareEvent()
@@ -894,6 +899,11 @@ sealed class PrepareEvent {
     data object Roll : PrepareEvent()
     data object Battle : PrepareEvent()
     class ClickOnCell(val row: Int, val column: Int) : PrepareEvent()
+
+    data object Exit : PrepareEvent()
+    data object Back : PrepareEvent()
+    data object CloseDialog : PrepareEvent()
+
 
 
 }

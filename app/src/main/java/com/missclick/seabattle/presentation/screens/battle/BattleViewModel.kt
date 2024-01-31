@@ -14,6 +14,7 @@ import com.missclick.seabattle.domain.use_cases.DoStepUseCase
 import com.missclick.seabattle.presentation.navigation.NavigationKeys
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
@@ -34,6 +35,11 @@ class BattleViewModel @Inject constructor(
 
     val isOwner : Boolean = savedStateHandle.get<String>(NavigationKeys.IS_OWNER).toString().toBoolean()
     val code : String = savedStateHandle.get<String>(NavigationKeys.CODE).toString()
+
+
+    private val _uiStateExitDialog = MutableStateFlow(false)
+
+    val uiStateExitDialog : StateFlow<Boolean> = _uiStateExitDialog
 
 
 
@@ -82,6 +88,12 @@ class BattleViewModel @Inject constructor(
             }
             is BattleEvent.Exit -> {
                 exit()
+            }
+            is BattleEvent.Back -> {
+                _uiStateExitDialog.value = true
+            }
+            is BattleEvent.CloseDialog -> {
+                _uiStateExitDialog.value = false
             }
         }
     }
@@ -138,6 +150,8 @@ sealed class BattleEvent {
     data object Restart : BattleEvent()
 
     data object Exit : BattleEvent()
+    data object Back : BattleEvent()
+    data object CloseDialog : BattleEvent()
 }
 
 

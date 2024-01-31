@@ -1,14 +1,19 @@
 package com.missclick.seabattle.presentation.screens.prepare
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
@@ -29,6 +34,9 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
@@ -36,9 +44,13 @@ import com.missclick.seabattle.R
 import com.missclick.seabattle.presentation.components.BackMark
 import com.missclick.seabattle.presentation.components.Battlefield
 import com.missclick.seabattle.presentation.components.BattlefieldNew
+import com.missclick.seabattle.presentation.components.ExitDialog
+import com.missclick.seabattle.presentation.components.click
 import com.missclick.seabattle.presentation.components.listBattlefield
 import com.missclick.seabattle.presentation.navigation.NavigationTree
+import com.missclick.seabattle.presentation.screens.battle.BattleEvent
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
+import com.missclick.seabattle.presentation.ui.theme.SeaBattleTheme
 
 
 @Composable
@@ -50,9 +62,16 @@ fun PrepareRoute(navController: NavController, vm: PrepareViewModel = hiltViewMo
         uiState = uiState,
         obtainEvent = vm::obtainEvent,
         navigateTo = {
-            println("navigate")
-            navController.navigate(it) }
+            navController.navigate(it)
+        },
+        navigateBack = {
+            navController.popBackStack(NavigationTree.Menu.route , false)
+        }
     )
+
+    BackHandler {
+        vm.obtainEvent(PrepareEvent.Back)
+    }
 
 }
 
@@ -61,10 +80,16 @@ fun PrepareRoute(navController: NavController, vm: PrepareViewModel = hiltViewMo
 fun PrepareScreen(
     uiState: PrepareUiState,
     obtainEvent: (PrepareEvent) -> Unit,
-    navigateTo: (String) -> Unit
+    navigateTo: (String) -> Unit,
+    navigateBack: () -> Unit,
 ) {
 
     Box(modifier = Modifier.fillMaxSize()) {
+
+        BackMark {
+            obtainEvent(PrepareEvent.Back)
+        }
+
         val orientation = LocalConfiguration.current.orientation
 
         val battleFieldSize = listOf(
@@ -205,12 +230,11 @@ fun PrepareScreen(
                                 modifier = Modifier
                                     .weight(4f)
                                     .width(battleFieldSize.dp / 3)
-                                    .alpha(if (uiState.isCanGoBattle) 1f else 0.3f)
-                                ,
+                                    .alpha(if (uiState.isCanGoBattle) 1f else 0.3f),
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                 border = BorderStroke(1.dp, AppTheme.colors.primary),
                                 onClick = {
-                                    if (uiState.isCanGoBattle){
+                                    if (uiState.isCanGoBattle) {
                                         obtainEvent(PrepareEvent.Battle)
                                         println("click card")
                                         navigateTo(NavigationTree.Battle.route + "/" + uiState.code + "/" + uiState.isOwner.toString())
@@ -363,12 +387,11 @@ fun PrepareScreen(
                                 modifier = Modifier
                                     .weight(4f)
                                     .width(battleFieldSize.dp / 3)
-                                    .alpha(if (uiState.isCanGoBattle) 1f else 0.3f)
-                                ,
+                                    .alpha(if (uiState.isCanGoBattle) 1f else 0.3f),
                                 colors = CardDefaults.cardColors(containerColor = Color.Transparent),
                                 border = BorderStroke(1.dp, AppTheme.colors.primary),
                                 onClick = {
-                                    if (uiState.isCanGoBattle){
+                                    if (uiState.isCanGoBattle) {
                                         obtainEvent(PrepareEvent.Battle)
                                         println("click card")
                                         navigateTo(NavigationTree.Battle.route + "/" + uiState.code + "/" + uiState.isOwner.toString())
@@ -391,11 +414,25 @@ fun PrepareScreen(
             }
         }
 
-
-
-        BackMark {
+        if (uiState.dialogAlertIsOpen) {
+            ExitDialog(
+                no = { obtainEvent(PrepareEvent.CloseDialog) },
+                yes = {
+                    obtainEvent(PrepareEvent.Exit)
+                    navigateBack()
+                }
+            )
 
         }
+
+
     }
 
 }
+
+
+
+
+
+
+

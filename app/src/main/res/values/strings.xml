@@ -14,4 +14,6 @@
     <string name="menu">Menu</string>
     <string name="restart">Restart</string>
     <string name="waiting">Waiting...</string>
+    <string name="sound">Sound</string>
+    <string name="vibro">Vibaration</string>
 </resources>

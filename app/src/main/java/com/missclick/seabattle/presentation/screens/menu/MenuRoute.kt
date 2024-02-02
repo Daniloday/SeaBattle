@@ -35,7 +35,7 @@ fun MenuRoute(navController: NavController, vm: MenuViewModel = hiltViewModel())
     MenuScreen(
         uiState = uiState,
         obtainEvent = vm::obtainEvent,
-        navigateTo = { navController.navigate(it) }
+        navigateTo = { navController.navigate(it.route) }
     )
 
 }
@@ -44,7 +44,7 @@ fun MenuRoute(navController: NavController, vm: MenuViewModel = hiltViewModel())
 fun MenuScreen(
     uiState: MenuUiState,
     obtainEvent: (MenuEvent) -> Unit,
-    navigateTo: (String) -> Unit
+    navigateTo: (NavigationTree) -> Unit
 ) {
 
     Column(
@@ -63,13 +63,13 @@ fun MenuScreen(
         )
 
         Text(text = stringResource(id = R.string.multiplayer), modifier = Modifier.clickable {
-            navigateTo(NavigationTree.Multiplayer.route)
+            navigateTo(NavigationTree.Multiplayer)
         },
             style = AppTheme.typography.h1,
             color = AppTheme.colors.primary
         )
         Text(text = stringResource(id = R.string.settings), modifier = Modifier.clickable {
-            navigateTo(NavigationTree.Battle.route + "/" + "87871" + "/" + "true")
+            navigateTo(NavigationTree.Settings)
         },
             style = AppTheme.typography.h1,
             color = AppTheme.colors.primary

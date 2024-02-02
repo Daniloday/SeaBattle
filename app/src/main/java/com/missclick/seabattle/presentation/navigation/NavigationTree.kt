@@ -7,6 +7,7 @@ sealed class NavigationTree(val route : String) {
     data object Prepare: NavigationTree("prepare")
     data object Battle : NavigationTree("battle")
     data object Waiting : NavigationTree("waiting")
+    data object Settings : NavigationTree("settings")
 
 
 }

@@ -33,6 +33,7 @@ import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.missclick.seabattle.R
 import com.missclick.seabattle.presentation.components.BackMark
+import com.missclick.seabattle.presentation.components.click
 import com.missclick.seabattle.presentation.navigation.NavigationTree
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
 
@@ -41,10 +42,10 @@ fun SettingsRoute(navController: NavController, vm: SettingsViewModel = hiltView
 
     val uiState by vm.uiState.collectAsState()
 
-    SettingsScreen(uiState = uiState, obtainEvent = vm::obtainEvent, navigateTo = {
-        println("navigate")
-        navController.navigate(it.route)
+    SettingsScreen(uiState = uiState, obtainEvent = vm::obtainEvent, navigateToBack = {
+        navController.popBackStack()
     })
+
 
 }
 
@@ -52,7 +53,7 @@ fun SettingsRoute(navController: NavController, vm: SettingsViewModel = hiltView
 fun SettingsScreen(
     uiState: SettingsUiState,
     obtainEvent: (SettingsEvent) -> Unit,
-    navigateTo: (NavigationTree) -> Unit
+    navigateToBack: () -> Unit
 ) {
 
 
@@ -91,7 +92,7 @@ fun SettingsScreen(
                     LottieAnimation(
                         modifier = Modifier
                             .size(100.dp)
-                            .clickable {
+                            .click {
                                 soundOnNow = false
                                 isPlaying = true
                             },
@@ -103,7 +104,7 @@ fun SettingsScreen(
                     LottieAnimation(
                         modifier = Modifier
                             .size(100.dp)
-                            .clickable {
+                            .click{
                                 soundOnNow = true
                                 isPlaying = true
                             },
@@ -152,7 +153,7 @@ fun SettingsScreen(
 
         }
         BackMark {
-            navigateTo(NavigationTree.Menu)
+            navigateToBack()
         }
     }
 }

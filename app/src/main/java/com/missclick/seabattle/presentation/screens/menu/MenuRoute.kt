@@ -70,7 +70,7 @@ fun MenuScreen(
             color = AppTheme.colors.primary
         )
         Text(text = stringResource(id = R.string.settings), modifier = Modifier.click {
-            navigateTo(NavigationTree.Battle.route + "/" + "87871" + "/" + "true")
+            navigateTo(NavigationTree.Settings.route)
         },
             style = AppTheme.typography.h1,
             color = AppTheme.colors.primary

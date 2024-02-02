@@ -1,5 +1,8 @@
 package com.missclick.seabattle.presentation.screens.menu
 
+import android.net.Uri
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.Stable
 import com.missclick.seabattle.common.BaseViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +17,7 @@ class MenuViewModel @Inject constructor() :
 
 
     override fun obtainEvent(event: MenuEvent) {
-      
+
         when(event){
             is MenuEvent.Next -> {
 
@@ -25,6 +28,7 @@ class MenuViewModel @Inject constructor() :
 
 
 }
+
 
 data class MenuUiState(
     val a : String

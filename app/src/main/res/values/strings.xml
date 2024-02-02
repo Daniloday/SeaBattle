@@ -19,4 +19,6 @@
     <string name="areYouSureExit">Are you sure you want to leave? The room will be deleted</string>
     <string name="no">No</string>
     <string name="yes">Yes</string>
+    <string name="sound">Sound</string>
+    <string name="vibro">Vibration</string>
 </resources>

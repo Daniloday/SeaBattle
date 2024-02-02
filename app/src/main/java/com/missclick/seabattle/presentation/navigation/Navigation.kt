@@ -11,6 +11,7 @@ import com.missclick.seabattle.presentation.screens.battle.BattleViewModel
 import com.missclick.seabattle.presentation.screens.menu.MenuRoute
 import com.missclick.seabattle.presentation.screens.multiplayer.MultiplayerRoute
 import com.missclick.seabattle.presentation.screens.prepare.PrepareRoute
+import com.missclick.seabattle.presentation.screens.settings.SettingsRoute
 import com.missclick.seabattle.presentation.screens.waiting.WaitingRoute
 
 
@@ -41,6 +42,10 @@ fun Navigation(){
 
         composable(NavigationTree.Waiting.route){
             WaitingRoute(navController)
+        }
+
+        composable(NavigationTree.Settings.route){
+            SettingsRoute(navController = navController)
         }
 
     }

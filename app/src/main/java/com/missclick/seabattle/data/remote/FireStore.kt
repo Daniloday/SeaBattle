@@ -82,7 +82,7 @@ class FireStore @Inject constructor() {
                 trySend(data2)
 
             } else {
-                //close(Throwable("Snapshot is null or empty"))
+                close(Throwable("Snapshot is null or empty"))
             }
         }
         awaitClose()

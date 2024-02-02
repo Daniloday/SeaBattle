@@ -9,5 +9,7 @@ sealed class NavigationTree(val route : String) {
     data object Waiting : NavigationTree("waiting")
     data object Settings : NavigationTree("settings")
 
+    data object Single : NavigationTree("single")
+
 
 }

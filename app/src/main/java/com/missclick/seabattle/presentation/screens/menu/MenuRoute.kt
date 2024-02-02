@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,6 +40,8 @@ fun MenuRoute(navController: NavController, vm: MenuViewModel = hiltViewModel())
         navigateTo = { navController.navigate(it) }
     )
 
+
+
 }
 
 @Composable
@@ -57,7 +60,7 @@ fun MenuScreen(
         ) {
 
         Text(text = stringResource(id = R.string.single_mode), modifier = Modifier.click {
-
+            navigateTo(NavigationTree.Single.route)
         },
             style = AppTheme.typography.h1,
             color = AppTheme.colors.primary

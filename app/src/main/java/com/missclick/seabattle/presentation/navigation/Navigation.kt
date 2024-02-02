@@ -1,5 +1,6 @@
 package com.missclick.seabattle.presentation.navigation
 
+import android.webkit.WebView
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
@@ -12,6 +13,7 @@ import com.missclick.seabattle.presentation.screens.menu.MenuRoute
 import com.missclick.seabattle.presentation.screens.multiplayer.MultiplayerRoute
 import com.missclick.seabattle.presentation.screens.prepare.PrepareRoute
 import com.missclick.seabattle.presentation.screens.settings.SettingsRoute
+import com.missclick.seabattle.presentation.screens.single.SingleRoute
 import com.missclick.seabattle.presentation.screens.waiting.WaitingRoute
 
 
@@ -19,7 +21,6 @@ import com.missclick.seabattle.presentation.screens.waiting.WaitingRoute
 fun Navigation(){
 
     val navController = rememberNavController()
-
 
     NavHost(navController = navController, startDestination = NavigationTree.Menu.route){
 
@@ -46,6 +47,10 @@ fun Navigation(){
 
         composable(NavigationTree.Settings.route){
             SettingsRoute(navController = navController)
+        }
+
+        composable(NavigationTree.Single.route){
+            SingleRoute(navController = navController)
         }
 
     }

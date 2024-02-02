@@ -40,6 +40,7 @@ import com.missclick.seabattle.presentation.components.Connecting
 import com.missclick.seabattle.presentation.components.ExitDialog
 import com.missclick.seabattle.presentation.components.click
 import com.missclick.seabattle.presentation.navigation.NavigationTree
+import com.missclick.seabattle.presentation.screens.waiting.WaitingEvent
 import com.missclick.seabattle.presentation.ui.theme.AppTheme
 
 @Composable
@@ -90,11 +91,9 @@ fun BattleScreen(
             }
 
             is BattleUiState.Error -> {
-                Text(
-                    text = "Error ${uiState.errorName}",
-                    style = AppTheme.typography.h3,
-                    color = AppTheme.colors.error
-                )
+                BattleError(modifier = Modifier.align(Alignment.Center)) {
+                    navigateToMenu()
+                }
             }
 
             is BattleUiState.Success -> {
@@ -322,6 +321,40 @@ fun WinDialog(
 
 
         }
+
+    }
+
+
+}
+
+
+@Composable
+fun BattleError(
+    modifier: Modifier = Modifier,
+    backToMenu: () -> Unit
+){
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(68.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        Text(
+            text = stringResource(id = R.string.error),
+            color = AppTheme.colors.error,
+            style = AppTheme.typography.h4,
+
+            )
+
+        Text(
+            text = stringResource(id = R.string.menu),
+            color = AppTheme.colors.primary,
+            style = AppTheme.typography.h1,
+            modifier = Modifier.click {
+               backToMenu()
+            }
+        )
 
     }
 

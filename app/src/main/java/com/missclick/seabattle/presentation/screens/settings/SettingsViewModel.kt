@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.missclick.seabattle.common.BaseViewModel
 import com.missclick.seabattle.common.EventHandler
 import com.missclick.seabattle.domain.SettingsRepository
+import com.missclick.seabattle.domain.model.Settings
 import com.missclick.seabattle.domain.use_cases.ObserveSettingsUseCase
 import com.missclick.seabattle.domain.use_cases.ReadyUseCase
 import com.missclick.seabattle.presentation.screens.prepare.PrepareEvent
@@ -26,13 +27,10 @@ class SettingsViewModel @Inject constructor(
 ) : ViewModel(), EventHandler<SettingsEvent> {
 
     val uiState: StateFlow<SettingsUiState> = settingsRepository.settings.map {
-        SettingsUiState(
-            vibrationOn = it.vibration,
-            soundOn = it.volume
-        )
+        SettingsUiState.Success(it)
     }.stateIn(
         scope = viewModelScope,
-        initialValue = SettingsUiState(),
+        initialValue = SettingsUiState.Loading,
         started = SharingStarted.WhileSubscribed(5_000))
 
 
@@ -62,10 +60,12 @@ class SettingsViewModel @Inject constructor(
 
 }
 
-data class SettingsUiState(
-    val soundOn: Boolean = true,
-    val vibrationOn: Boolean = true,
-)
+interface SettingsUiState {
+
+    object Loading : SettingsUiState
+    data class Success(val settings : Settings) : SettingsUiState
+
+}
 
 sealed interface SettingsEvent {
     data object ChangeSoundState : SettingsEvent

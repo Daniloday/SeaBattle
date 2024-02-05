@@ -204,7 +204,10 @@ fun BattleSuccess(
                                     }
                                 }
                             }, modifier = Modifier
-                            .size(battleFieldSize.dp)
+                            .size(battleFieldSize.dp),
+                        onClick = if (uiState.yourMove) { y, x ->
+                            obtainEvent(BattleEvent.DoStep(y = y, x = x))
+                        } else null
                     )
                     Image(
                         painter = painterResource(id = R.drawable.back_mark),
@@ -212,15 +215,13 @@ fun BattleSuccess(
                         modifier = Modifier
                             .size(40.dp)
                             .rotate(
-                                if (uiState.yourMove) 180f else 0f
+                                if (!uiState.yourMove) 180f else 0f
                             )
                     )
                     Battlefield(
-                        listBattlefield = uiState.friendCells, modifier = Modifier
+                        listBattlefield = uiState.yourCells, modifier = Modifier
                             .size(battleFieldSize.dp),
-                        onClick = if (uiState.yourMove) { y, x ->
-                            obtainEvent(BattleEvent.DoStep(y = y, x = x))
-                        } else null
+
                     )
                 }
 

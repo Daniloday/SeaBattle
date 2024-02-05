@@ -5,7 +5,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
     kotlin("plugin.serialization")
-//    id ("com.google.firebase.crashlytics")
+    id ("com.google.firebase.crashlytics")
 }
 
 android {
@@ -85,8 +85,8 @@ dependencies {
 
     implementation(platform("com.google.firebase:firebase-bom:32.7.1"))
     implementation("com.google.firebase:firebase-firestore")
-//    implementation("com.google.firebase:firebase-analytics")
-
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-crashlytics")
     implementation ("com.google.code.gson:gson:2.10.1")
     implementation("com.squareup.moshi:moshi:1.15.0")
 

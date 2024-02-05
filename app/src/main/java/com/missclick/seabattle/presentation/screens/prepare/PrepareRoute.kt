@@ -197,7 +197,7 @@ fun PrepareScreen(
                             ) {
                                 Box(Modifier.fillMaxSize()) {
                                     Text(
-                                        text = "Random",
+                                        text = stringResource(id = R.string.random),
                                         modifier = Modifier.align(Alignment.Center),
                                         style = AppTheme.typography.h3
                                     )
@@ -218,7 +218,7 @@ fun PrepareScreen(
                             ) {
                                 Box(Modifier.fillMaxSize()) {
                                     Text(
-                                        text = "Roll",
+                                        text = stringResource(id = R.string.roll),
                                         modifier = Modifier.align(Alignment.Center),
                                         style = AppTheme.typography.h3
                                     )
@@ -243,7 +243,7 @@ fun PrepareScreen(
                             ) {
                                 Box(Modifier.fillMaxSize()) {
                                     Text(
-                                        text = "Battle!",
+                                        text = stringResource(id = R.string.battle),
                                         modifier = Modifier.align(Alignment.Center),
                                         style = AppTheme.typography.h3
                                     )
@@ -354,7 +354,7 @@ fun PrepareScreen(
                             ) {
                                 Box(Modifier.fillMaxSize()) {
                                     Text(
-                                        text = "Random",
+                                        text = stringResource(id = R.string.random),
                                         modifier = Modifier.align(Alignment.Center),
                                         style = AppTheme.typography.h3
                                     )
@@ -375,7 +375,7 @@ fun PrepareScreen(
                             ) {
                                 Box(Modifier.fillMaxSize()) {
                                     Text(
-                                        text = "Roll",
+                                        text = stringResource(id = R.string.roll),
                                         modifier = Modifier.align(Alignment.Center),
                                         style = AppTheme.typography.h3
                                     )
@@ -400,7 +400,7 @@ fun PrepareScreen(
                             ) {
                                 Box(Modifier.fillMaxSize()) {
                                     Text(
-                                        text = "Battle!",
+                                        text = stringResource(id = R.string.battle),
                                         modifier = Modifier.align(Alignment.Center),
                                         style = AppTheme.typography.h3
                                     )

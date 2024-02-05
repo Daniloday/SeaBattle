@@ -22,4 +22,7 @@
     <string name="sound">Sound</string>
     <string name="vibro">Vibration</string>
     <string name="coming">Coming soon…</string>
+    <string name="random">Random</string>
+    <string name="roll">Roll</string>
+    <string name="battle">Battle!</string>
 </resources>
